@@ -1,0 +1,3 @@
+rootProject.name = 'mobile_idle_game'
+
+include ':app'
