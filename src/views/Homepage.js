@@ -3,7 +3,6 @@ import {
   compose, withState, withHandlers, onlyUpdateForPropTypes,
 } from 'recompose';
 import { StyleSheet, View } from 'react-native';
-import { Switch, Route, Link } from 'react-router-native';
 
 import {
   Container, Content, Drawer, Button, Text,
@@ -11,8 +10,6 @@ import {
 
 import AppHeader from './navigation/Header';
 import Sidebar from './navigation/Sidebar';
-import ResourceList from './ResourceListView';
-import Income from './Income';
 
 
 const styles = StyleSheet.create({
@@ -27,22 +24,24 @@ const styles = StyleSheet.create({
 });
 
 const Homepage = ({
-  setDrawer, openDrawer, closeDrawer, navigator,
+  setDrawer, openDrawer, closeDrawer, navigation,
 }) => (
+  console.log('azeaze')
+  || (
   <Container style={styles.container}>
     <Drawer
       ref={(ref) => { setDrawer(ref); }}
-      content={<Sidebar navigator={navigator} />}
+      content={<Sidebar navigator={navigation} />}
       onClose={closeDrawer}
     >
-      <AppHeader openDrawer={openDrawer} />
-      <Button bordered info style={styles.button} onPress={() => navigator.navigate('Resources')}>
+      <AppHeader navigation={navigation} />
+      <Button bordered info style={styles.button} onPress={() => console.log(navigation)}>
         <Text>Owned resources</Text>
       </Button>
       <Button bordered info>
         <Text>Info</Text>
       </Button>
-      <Button onPress={() => navigator.navigate('Resources')}>
+      <Button onPress={() => navigation.navigate('Resources')}>
         <Text>List</Text>
       </Button>
       {/* <Switch>
@@ -51,16 +50,17 @@ const Homepage = ({
             </Switch> */}
     </Drawer>
   </Container>
+  )
 );
 
 Homepage.propTypes = {};
 
 export default compose(
   withState('drawer', 'setDrawer', null),
-  withHandlers({
-    openDrawer: props => () => props.navigation.openDrawer(),
-    // closeDrawer: props => () => props.navigation.closeDrawer(),
-    // closeDrawer: props => () => props.drawer._root.close(),
-  }),
+  // withHandlers({
+  // openDrawer: props => () => props.navigation.openDrawer(),
+  // closeDrawer: props => () => props.navigation.closeDrawer(),
+  // closeDrawer: props => () => props.drawer._root.close(),
+  // }),
   onlyUpdateForPropTypes,
 )(Homepage);
