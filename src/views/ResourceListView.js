@@ -1,82 +1,126 @@
 import React from 'react';
-import { compose, withState, withHandlers, lifecycle } from 'recompose';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+import {
+  compose, withHandlers, withProps,
+} from 'recompose';
 import { StyleSheet, View } from 'react-native';
-import { Content, Button, Text } from 'native-base';
+import {
+  Content, Button, Text,
+} from 'native-base';
 
-import CustomButton from './components/Button';
+import { connect } from 'react-redux';
+import { selectWood, selectLogs } from '../redux/resource/selector';
+import { selectMaxLog } from '../redux/settings/selector';
+import { addWood } from '../redux/resource/action';
+
+import AppHeader from './navigation/Header';
+
+import { woodLogs } from '../logs/logs';
+import withInterval from '../hoc/withInterval';
 
 const styles = StyleSheet.create({
-    container: {
-        margin: 'auto',
-    },
-    button: {
-        marginBottom: 10,
-    }
-})
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    paddingTop: 30,
+  },
+  button: {
+    margin: 'auto',
+    marginBottom: 15,
+  },
+  buttonText: {
+    fontSize: 16,
+  },
+  logContainer: {
+    flex: 2,
+    margin: 10,
+    textAlign: 'center',
+  },
+});
 
-const ResourceListView = ({ gold, onIncrementGold, totalGold, villager, onIncrementVillager }) => (
-    <Content style={styles.container}>
-        <Button light bordered onPress={onIncrementGold}>
-            <Text>Find gold</Text>
-        </Button>
-        {totalGold >= 30
+const ResourceListView = ({
+  wood, pickRessource, navigation, logs,
+}) => (
+  <Content style={{ flex: 1 }}>
+    <AppHeader navigation={navigation} />
+    <View style={styles.container}>
+      <Button large info bordered onPress={pickRessource} style={styles.button}>
+        <Text style={styles.buttonText}>Pick up wood</Text>
+      </Button>
+      {/* {totalGold >= 30
         ? (gold >= 30 + (5 * villager)
-          ? <Button onPress={() => onIncrementVillager(30 + (5 * villager))} bordered light>
-                <Text>
-                    Get villager{"\n"}
-                    Cost: {30 + (5 * villager)}
-                </Text>
+          ? (
+            <Button large onPress={() => onIncrementVillager(30 + (5 * villager))} bordered info>
+              <Text style={styles.buttonText}>
+                    Get villager
+                {'\n'}
+                    Cost:
+                {' '}
+                {30 + (5 * villager)}
+              </Text>
             </Button>
-          : <Button disabled bordered>
-                <Text>
-                    Get villager{"\n"}
-                    Cost: {30 + (5 * villager)}
-                </Text>
-            </Button>)
+          )
+          : (
+            <Button
+              large
+              disabled
+              bordered
+              onPress={() => Toast.show({
+                text: 'Not!',
+                buttonText: 'Okay',
+              })}
+            >
+              <Text style={styles.buttonText}>
+                    Get villager
+                {'\n'}
+                    Cost:
+                {' '}
+                {30 + (5 * villager)}
+              </Text>
+            </Button>
+          ))
         : null
-        }
-        <Text>You have {gold} gold.</Text>
-        <Text>You have {villager} villagers.</Text>
-    </Content>
+        } */}
+
+      {/* <Text>{`You have ${villager} villagers.`}</Text> */}
+    </View>
+    <Text>{`You have ${wood} wood.`}</Text>
+    <View style={styles.logContainer}>
+      { logs && logs.map((log, idx) => <Text style={{ opacity: Math.max(0, (20 - idx)) / 20 }} key={idx}>{log}</Text>) }
+    </View>
+  </Content>
 );
 
-export default compose(
-    withState('villager', 'setVillager', 0),
-    withState('totalVillager', 'setTotalVillager', 0),
-    withState('gold', 'setGold', 0),
-    withState('totalGold', 'setTotalGold', 0),
-    withHandlers({
-        onIncrementGold: (props) => () => {
-            props.setGold(props.gold + 1);
-            props.setTotalGold(props.totalGold + 1)
-        },
-        onDecrementGold: (props) => nbGold => {
-            props.setGold(props.gold - nbGold);
-        },
-        onIncrementVillager: (props) => nbGold => {
-            props.setVillager(props.villager + 1);
-            props.setTotalVillager(props.totalVillager + 1);
-            props.setGold(props.gold - nbGold);
-        },
-    }),
-    lifecycle({
-        componentDidMount () {
-            alert('Component mounted');
-        },
-        componentWillUnmount() {
-            clearInterval(props.id);
-        }
-    }),
-    withState('id', 'setId', 0),
-)(ResourceListView);
+ResourceListView.propTypes = {
+  wood: PropTypes.number.isRequired,
+  logs: PropTypes.arrayOf(PropTypes.string),
+};
+ResourceListView.defaultProps = {
+  logs: [],
+};
 
-// export default class ResourceListView extends React.PureComponent {
-//     render() {
-//         return (
-//             <View>
-//                 <Button title='Click'></Button>
-//                 <Text>This is a test button.</Text>
-//             </View>
-//         )
-//     }
-// }
+const mapStateToProps = state => ({
+  wood: selectWood(state),
+  logs: selectLogs(state),
+  maxLogs: selectMaxLog(state),
+});
+
+const mapDispatchToProps = {
+  incWood: addWood,
+};
+
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  withProps({
+    incStep: 1, selectMaxLog,
+  }),
+  withHandlers({
+    pickRessource: ({ incWood, incStep }) => () => incWood({ nbWood: incStep }),
+  }),
+)(ResourceListView);
