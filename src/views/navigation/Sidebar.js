@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
+import EStyleSheet from 'react-native-extended-stylesheet';
 import { Link } from 'react-router-native';
 import {
   List, ListItem, Button, Text,
@@ -31,23 +32,26 @@ const routes = [{
 //     />
 // )
 
+const styles = EStyleSheet.create({
+  container: {
+    backgroundColor: EStyleSheet.value('themeBackground'),
+  },
+  link: {
+    flex: 1,
+  },
+  text: {
+    color: EStyleSheet.value('textColor'),
+  },
+});
+
 export default ({ navigator }) => (
   <List
     style={styles.container}
     dataArray={routes}
     renderRow={data => (
       <ListItem button onPress={() => navigator.navigate(`${data.name}`)}>
-        <Text>{data.name}</Text>
+        <Text style={styles.text}>{data.name}</Text>
       </ListItem>
     )}
   />
 );
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-  },
-  link: {
-    flex: 1,
-  },
-});

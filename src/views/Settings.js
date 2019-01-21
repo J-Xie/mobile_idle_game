@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import EStyleSheet from 'react-native-extended-stylesheet';
+import { TextInput } from 'react-native';
 import {
   Content, Button, Text, Grid, Col, Row,
 } from 'native-base';
@@ -14,15 +15,14 @@ import { selectMaxLogs } from '../redux/resource/selector';
 
 import AppHeader from './navigation/Header';
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   title: { flex: 1, justifyContent: 'center', marginLeft: 10 },
   content: { display: 'flex', flexDirection: 'row', justifyContent: 'space-around' },
   input: { flex: 1 },
 });
 
-console.log('test2');
 const Settings = ({
-  navigation, maxLogs, theme, setMaxLogs,
+  navigation, maxLogs, theme, setMaxLogs, setTheme,
 }) => (
   <Content>
     <AppHeader navigation={navigation} />
@@ -46,10 +46,12 @@ const Settings = ({
           <Text>Change theme</Text>
         </Col>
         <Col style={styles.content}>
-          <Button bordered info>
+          <Button bordered info onPress={() => setTheme('light')}>
+            {/* TOGGLE LIGHT THEME */}
             <Text>light</Text>
           </Button>
-          <Button bordered info>
+          <Button bordered info onPress={() => setTheme('dark')}>
+            {/* TOGGLE DARK THEME */}
             <Text>dark</Text>
           </Button>
         </Col>
@@ -58,11 +60,10 @@ const Settings = ({
   </Content>
 );
 
-const mapStateToProps = state => (
-  console.log(state) || {
-    maxLogs: selectMaxLogs(state),
-    theme: selectTheme(state),
-  });
+const mapStateToProps = state => ({
+  maxLogs: selectMaxLogs(state),
+  theme: selectTheme(state),
+});
 
 const mapDispatchToProps = {
   setMaxLogs: changeMaxLogs,

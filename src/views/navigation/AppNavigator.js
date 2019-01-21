@@ -6,8 +6,6 @@ import ResourceList from '../ResourceListView';
 import Income from '../Income';
 import Settings from '../Settings';
 
-console.log(Homepage);
-
 export default createDrawerNavigator({
   Home: { screen: Homepage },
   Resources: { screen: ResourceList },

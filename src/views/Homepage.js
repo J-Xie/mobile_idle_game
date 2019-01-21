@@ -1,8 +1,9 @@
 import React from 'react';
 import {
-  compose, withState, withHandlers, onlyUpdateForPropTypes,
+  compose, withState, withHandlers, onlyUpdateForPropTypes, lifecycle,
 } from 'recompose';
-import { StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
+import EStyleSheet from 'react-native-extended-stylesheet';
 
 import {
   Container, Content, Drawer, Button, Text,
@@ -11,8 +12,9 @@ import {
 import AppHeader from './navigation/Header';
 import Sidebar from './navigation/Sidebar';
 
+import { selectTheme } from '../redux/settings/selector';
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   container: {
     flex: 1,
   },
@@ -44,10 +46,6 @@ const Homepage = ({
       <Button onPress={() => navigation.navigate('Resources')}>
         <Text>List</Text>
       </Button>
-      {/* <Switch>
-            <Route path='/income' component={Income} />
-            <Route path='/resourceList' component={ResourceList} />
-            </Switch> */}
     </Drawer>
   </Container>
   )
@@ -55,8 +53,19 @@ const Homepage = ({
 
 Homepage.propTypes = {};
 
+const mapStateToProps = state => ({
+  theme: selectTheme(state),
+});
+
 export default compose(
+  connect(mapStateToProps),
   withState('drawer', 'setDrawer', null),
+  lifecycle({
+    componentDidMount() {
+      const theme = this.props.theme ? '' : '';
+      EStyleSheet.build(theme);
+    },
+  }),
   // withHandlers({
   // openDrawer: props => () => props.navigation.openDrawer(),
   // closeDrawer: props => () => props.navigation.closeDrawer(),

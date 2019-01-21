@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import EStyleSheet from 'react-native-extended-stylesheet';
 import _ from 'lodash';
 import {
   compose, withHandlers, withProps,
 } from 'recompose';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import {
   Content, Button, Text,
 } from 'native-base';
@@ -19,7 +20,10 @@ import AppHeader from './navigation/Header';
 import { woodLogs } from '../logs/logs';
 import withInterval from '../hoc/withInterval';
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -44,7 +48,7 @@ const styles = StyleSheet.create({
 const ResourceListView = ({
   wood, pickRessource, navigation, logs,
 }) => (
-  <Content style={{ flex: 1 }}>
+  <Content style={styles.wrapper}>
     <AppHeader navigation={navigation} />
     <View style={styles.container}>
       <Button large info bordered onPress={pickRessource} style={styles.button}>

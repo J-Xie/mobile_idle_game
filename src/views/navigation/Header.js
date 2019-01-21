@@ -1,16 +1,16 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import EStyleSheet from 'react-native-extended-stylesheet';
 import { compose, withHandlers } from 'recompose';
 import {
   Container, Header, Left, Body, Right, Button, Icon,
 } from 'native-base';
 
-const styles = StyleSheet.create({
+const styles = EStyleSheet.create({
   headerContainer: {
-    backgroundColor: 'white',
+    backgroundColor: EStyleSheet.value('themeBackground'),
   },
   header: {
-    backgroundColor: 'white',
+    backgroundColor: EStyleSheet.value('themeBackground'),
     height: 50,
   },
 });
