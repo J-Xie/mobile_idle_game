@@ -1,7 +1,10 @@
-// import { combineReducers } from 'redux';
+import { combineReducers } from 'redux';
+import resource from '../resource/reducer';
+import settings from '../settings/reducer';
 
-// export default combineReducers({
-    
-// });
+export default combineReducers({
+  resource,
+  settings,
+});
 
-export default () => {};
+// export default () => {};
