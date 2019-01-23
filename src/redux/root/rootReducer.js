@@ -6,5 +6,3 @@ export default combineReducers({
   resource,
   settings,
 });
-
-// export default () => {};

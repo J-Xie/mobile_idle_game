@@ -2,34 +2,33 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import _ from 'lodash';
-import {
-  compose, withHandlers, withProps,
-} from 'recompose';
-import { View } from 'react-native';
-import {
-  Content, Button, Text,
-} from 'native-base';
+import { compose, withHandlers } from 'recompose';
+import { View, ScrollView } from 'react-native';
 
 import { connect } from 'react-redux';
-import { selectWood, selectLogs } from '../redux/resource/selector';
-import { selectMaxLog } from '../redux/settings/selector';
-import { addWood } from '../redux/resource/action';
+import {
+  selectResources,
+  selectResource,
+  selectUnlockedPicks,
+} from '../redux/resource/selector';
+import { addResources } from '../redux/resource/action';
 
-import AppHeader from './navigation/Header';
-
-import { woodLogs } from '../logs/logs';
-import withInterval from '../hoc/withInterval';
+import { Button, Text } from './components';
 
 const styles = EStyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
   container: {
     flex: 1,
+    backgroundColor: '$bgColor',
+  },
+  actions: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     paddingTop: 30,
+  },
+  logContainer: {
+    margin: 10,
+    textAlign: 'center',
   },
   button: {
     margin: 'auto',
@@ -37,94 +36,78 @@ const styles = EStyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+    color: '$textColor',
   },
-  logContainer: {
-    flex: 2,
-    margin: 10,
+  text: {
+    color: '$textColor',
     textAlign: 'center',
   },
 });
 
-const ResourceListView = ({
-  wood, pickRessource, navigation, logs,
-}) => (
-  <Content style={styles.wrapper}>
-    <AppHeader navigation={navigation} />
-    <View style={styles.container}>
-      <Button large info bordered onPress={pickRessource} style={styles.button}>
-        <Text style={styles.buttonText}>Pick up wood</Text>
-      </Button>
-      {/* {totalGold >= 30
-        ? (gold >= 30 + (5 * villager)
-          ? (
-            <Button large onPress={() => onIncrementVillager(30 + (5 * villager))} bordered info>
-              <Text style={styles.buttonText}>
-                    Get villager
-                {'\n'}
-                    Cost:
-                {' '}
-                {30 + (5 * villager)}
-              </Text>
-            </Button>
-          )
-          : (
-            <Button
-              large
-              disabled
-              bordered
-              onPress={() => Toast.show({
-                text: 'Not!',
-                buttonText: 'Okay',
-              })}
-            >
-              <Text style={styles.buttonText}>
-                    Get villager
-                {'\n'}
-                    Cost:
-                {' '}
-                {30 + (5 * villager)}
-              </Text>
-            </Button>
-          ))
-        : null
-        } */}
+const ResourceListView = ({ pickRessource, logs, picks, resources }) => (
+  <View style={styles.container}>
+    <View style={styles.actions}>
+      {picks.map(pick => (
+        <Button
+          key={pick.name}
+          onPress={() => pickRessource(pick.name)}
+          style={styles.button}
+          text={pick.buttonText}
+        />
+      ))}
+    </View>
 
-      {/* <Text>{`You have ${villager} villagers.`}</Text> */}
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.logContainer}>
+        {picks.map(pick => (
+          <Text key={pick.name} style={styles.text}>
+            You have {resources[pick.name].value} {pick.name}.
+          </Text>
+        ))}
+        {logs &&
+          logs.map((log, idx) => (
+            <Text
+              style={{
+                ...styles.text,
+                opacity: Math.max(0, logs.length - idx) / logs.length,
+              }}
+              key={idx.toString()}
+            >
+              {log}
+            </Text>
+          ))}
+      </ScrollView>
     </View>
-    <Text>{`You have ${wood} wood.`}</Text>
-    <View style={styles.logContainer}>
-      { logs && logs.map((log, idx) => <Text style={{ opacity: Math.max(0, (20 - idx)) / 20 }} key={idx}>{log}</Text>) }
-    </View>
-  </Content>
+  </View>
 );
 
 ResourceListView.propTypes = {
-  wood: PropTypes.number.isRequired,
   logs: PropTypes.arrayOf(PropTypes.string),
+  picks: PropTypes.array,
+  resources: PropTypes.object.isRequired,
+  pickRessource: PropTypes.func.isRequired,
 };
 ResourceListView.defaultProps = {
   logs: [],
+  picks: [],
 };
 
 const mapStateToProps = state => ({
-  wood: selectWood(state),
-  logs: selectLogs(state),
-  maxLogs: selectMaxLog(state),
+  resources: selectResources(state),
+  logs: selectResource(state, 'logs'),
+  picks: selectUnlockedPicks(state),
 });
 
 const mapDispatchToProps = {
-  incWood: addWood,
+  addResources,
 };
 
 export default compose(
   connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
   ),
-  withProps({
-    incStep: 1, selectMaxLog,
-  }),
   withHandlers({
-    pickRessource: ({ incWood, incStep }) => () => incWood({ nbWood: incStep }),
-  }),
+    pickRessource: props => type => props.addResources({ type, qty: 1 }),
+  })
 )(ResourceListView);
