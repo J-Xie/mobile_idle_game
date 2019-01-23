@@ -1,23 +1,32 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text } from 'native-base';
-import {
-  compose, withState, withHandlers, withProps,
-} from 'recompose';
 
-import AppHeader from './navigation/Header';
+import { compose, withState, withHandlers, withProps } from 'recompose';
 
-const table = [{
-  resource: 'farmer',
-  incomes: {
-    coins: '+1/s',
-  },
-}];
+import { Text } from './components';
 
+// const picksMap = {
+//   wood: {},
+//   science: {},
+// };
 
-const Income = ({ navigation }) => (
+// const roles = {
+//   lumberjack: {},
+//   soldier: {},
+//   scout: {},
+// };
+
+// const boats = {
+//   bark: {},
+//   frigate,
+//   caravel,
+//   liner: {},
+// };
+
+// const resourceIds = ['hut', 'study'];
+
+const Income = () => (
   <View>
-    <AppHeader navigation={navigation} />
     <Text>Hello world !</Text>
   </View>
 );
@@ -30,7 +39,7 @@ export default compose(
   }),
   withProps(props => ({
     title: `TITLE :: ${props.counter}`,
-  })),
+  }))
 )(Income);
 
 // export default class Income extends React.PureComponent {

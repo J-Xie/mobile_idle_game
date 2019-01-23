@@ -1,44 +1,53 @@
 import React from 'react';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { TextInput } from 'react-native';
-import {
-  Content, Button, Text, Grid, Col, Row,
-} from 'native-base';
+import { Content, Grid, Col, Row } from 'native-base';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-
 import { changeTheme } from '../redux/settings/action';
 import { selectTheme } from '../redux/settings/selector';
 
 import { changeMaxLogs } from '../redux/resource/action';
 import { selectMaxLogs } from '../redux/resource/selector';
 
-import AppHeader from './navigation/Header';
+import { TextInput, Button, Text } from './components';
 
 const styles = EStyleSheet.create({
-  title: { flex: 1, justifyContent: 'center', marginLeft: 10 },
-  content: { display: 'flex', flexDirection: 'row', justifyContent: 'space-around' },
-  input: { flex: 1 },
+  container: {
+    backgroundColor: '$bgColor',
+  },
+  title: {
+    flex: 1,
+    justifyContent: 'center',
+    marginLeft: 10,
+    color: '$textColor',
+  },
+  content: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    color: '$textColor',
+    marginBottom: 10,
+  },
+  input: { flex: 1, textAlign: 'center' },
 });
 
-const Settings = ({
-  navigation, maxLogs, theme, setMaxLogs, setTheme,
-}) => (
-  <Content>
-    <AppHeader navigation={navigation} />
+const Settings = ({ maxLogs, theme, setMaxLogs, setTheme }) => (
+  <Content style={styles.container}>
     <Grid>
       <Row>
         <Col style={styles.title}>
-          <Text>Change log number :</Text>
+          <Text>Change log number</Text>
         </Col>
         <Col style={styles.content}>
-          <TextInput
-            style={styles.input}
-            underlineColorAndroid="black"
-            placeholder={`${maxLogs}`}
-            keyboardType="number-pad"
-            onChangeText={value => setMaxLogs(Number(value))}
-          />
+          {maxLogs && (
+            <TextInput
+              style={styles.input}
+              value={maxLogs.toString()}
+              placeholder={`${maxLogs}`}
+              keyboardType="number-pad"
+              onChangeText={value => setMaxLogs(Number(value))}
+            />
+          )}
         </Col>
       </Row>
       <Row>
@@ -46,14 +55,16 @@ const Settings = ({
           <Text>Change theme</Text>
         </Col>
         <Col style={styles.content}>
-          <Button bordered info onPress={() => setTheme('light')}>
-            {/* TOGGLE LIGHT THEME */}
-            <Text>light</Text>
-          </Button>
-          <Button bordered info onPress={() => setTheme('dark')}>
-            {/* TOGGLE DARK THEME */}
-            <Text>dark</Text>
-          </Button>
+          <Button
+            onPress={() => setTheme('light')}
+            text="light"
+            selected={theme === 'light'}
+          />
+          <Button
+            onPress={() => setTheme('dark')}
+            text="dark"
+            selected={theme === 'dark'}
+          />
         </Col>
       </Row>
     </Grid>
@@ -73,6 +84,6 @@ const mapDispatchToProps = {
 export default compose(
   connect(
     mapStateToProps,
-    mapDispatchToProps,
-  ),
+    mapDispatchToProps
+  )
 )(Settings);
