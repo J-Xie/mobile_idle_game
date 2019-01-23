@@ -2,27 +2,26 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { Link } from 'react-router-native';
-import {
-  List, ListItem, Button, Text,
-} from 'native-base';
+import { List, ListItem, Button, Text } from 'native-base';
 
-const routes = [{
-  name: 'Home',
-  link: '/',
-},
-{
-  name: 'Resources',
-  link: '/resourceList',
-},
-{
-  name: 'Income',
-  link: '/income',
-},
-{
-  name: 'Settings',
-  link: '/settings',
-}];
-
+const routes = [
+  {
+    name: 'Home',
+    link: '/',
+  },
+  {
+    name: 'Resources',
+    link: '/resourceList',
+  },
+  {
+    name: 'Income',
+    link: '/income',
+  },
+  {
+    name: 'Settings',
+    link: '/settings',
+  },
+];
 
 // export default () => (
 //     <FlatList
@@ -34,13 +33,13 @@ const routes = [{
 
 const styles = EStyleSheet.create({
   container: {
-    backgroundColor: EStyleSheet.value('themeBackground'),
+    backgroundColor: '$bgColor',
   },
   link: {
     flex: 1,
   },
   text: {
-    color: EStyleSheet.value('textColor'),
+    color: '$textColor',
   },
 });
 
