@@ -9,7 +9,9 @@ import Buildings from '../Buildings';
 import Income from '../Income';
 import Settings from '../Settings';
 import { selectTheme } from '../../redux/settings/selector';
+import { addIncomes } from '../../redux/resource/action';
 import { activeTint } from '../../config/theme';
+import withInterval from '../../hoc/withInterval';
 
 const styles = EStyleSheet.create({
   content: {
@@ -18,11 +20,15 @@ const styles = EStyleSheet.create({
 });
 
 const tabBarComponent = compose(
-  connect(state => ({ theme: selectTheme(state) })),
+  connect(
+    state => ({ theme: selectTheme(state) }),
+    { addIncomes }
+  ),
   withProps(props => ({
     activeTintColor: activeTint[props.theme],
     style: styles.content,
-  }))
+  })),
+  withInterval(props => props.addIncomes(), 1000)
 )(BottomTabBar);
 
 export default createBottomTabNavigator(
