@@ -4,6 +4,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { createAppContainer } from 'react-navigation';
 
 import AppNavigator from './src/views/navigation/AppNavigator';
+import LoadMap from './src/views/LoadMap';
 import Theme from './src/views/Theme';
 import Store, { persistor } from './src/redux';
 
@@ -13,7 +14,9 @@ export default () => (
   <Provider store={Store}>
     <PersistGate persistor={persistor}>
       <Theme>
-        <AppContent />
+        <LoadMap>
+          <AppContent />
+        </LoadMap>
       </Theme>
     </PersistGate>
   </Provider>
