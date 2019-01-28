@@ -1,3 +1,13 @@
+import { forEach } from 'lodash';
+
+import woodIcon from '../assets/wood.png';
+import hutIcon from '../assets/hut.png';
+import forestIcon from '../assets/forest.png';
+import caveIcon from '../assets/cave.png';
+import plainIcon from '../assets/prairie.png';
+import scienceIcon from '../assets/idea.png';
+import labIcon from '../assets/chemistry.png';
+
 const BUILDING = 'BUILDING';
 const PICK = 'PICK';
 const RAW = 'RAW';
@@ -10,6 +20,18 @@ const createResources = (...resources) =>
         total: elem.initialValue || 0,
         isUnlocked: elem.isUnlocked || false,
       };
+
+      acc.allResources[elem.name] = elem;
+      if (elem.income && Object.keys(elem.income).length) {
+        acc.incomes[elem.name] = elem;
+      }
+
+      forEach(elem.req, (value, resName) => {
+        if (!acc.unlockDependency[resName]) {
+          acc.unlockDependency[resName] = [];
+        }
+        acc.unlockDependency[resName].push(elem);
+      });
 
       switch (elem.type) {
         case BUILDING:
@@ -29,14 +51,24 @@ const createResources = (...resources) =>
       initialState: {},
       buildings: {},
       picks: {},
+      incomes: {},
+      unlockDependency: {},
+      allResources: {},
     }
   );
 
-export const { initialState, buildings, picks } = createResources(
+export const {
+  initialState,
+  buildings,
+  picks,
+  incomes,
+  allResources,
+} = createResources(
   {
     name: 'wood',
     buttonText: 'Pick up wood',
     type: PICK,
+    icon: woodIcon,
     cost: {},
     req: {},
     income: {},
@@ -44,78 +76,192 @@ export const { initialState, buildings, picks } = createResources(
   },
   {
     name: 'hut',
+    buttonText: 'Build hut',
     type: BUILDING,
+    icon: hutIcon,
     req: {
-      wood: 50,
+      wood: 20,
     },
     cost: {
-      wood: 5,
-      // forest: 3,
+      wood: 20,
+      plain: 2,
     },
-    isUnlocked: true,
+    isUnlocked: false,
+    linked: {
+      availableVillager: 5,
+    },
     income: {},
+  },
+  {
+    name: 'sawmill',
+    buttonText: 'Construct a sawmill',
+    type: BUILDING,
+    icon: '',
+    req: {
+      wood: 20,
+    },
+    initialValue: 1,
+    cost: {
+      wood: 20,
+      forest: 5,
+    },
+    isUnlocked: false,
+    linked: {},
+    income: {
+      wood: 5,
+    },
+  },
+  {
+    name: 'villager',
+    type: RAW,
+    icon: '',
+    req: {
+      hut: 1,
+    },
+    cost: {
+      availableVillager: 1,
+    },
+    income: {},
+    isUnlocked: false,
+  },
+  {
+    name: 'availableVillager',
+    type: RAW,
+    icon: '',
+    req: {
+      hut: 1,
+    },
+    cost: {},
+    income: {},
+    isUnlocked: false,
   },
   {
     name: 'science',
     buttonText: 'Study',
     type: PICK,
+    icon: scienceIcon,
     req: {
       hut: 1,
     },
     cost: {
       wood: 10,
     },
+    income: {},
+    isUnlocked: false,
+  },
+  {
+    name: 'laboratory',
+    buttonText: 'Create a laboratory',
+    type: BUILDING,
+    icon: labIcon,
+    req: {
+      science: 50,
+    },
+    cost: {
+      science: 50,
+    },
     income: {
       science: 1,
     },
   },
   {
+    name: 'ironDeposit',
+    type: RAW,
+    icon: '',
+    req: {},
+    cost: {},
+    income: {},
+  },
+  {
     name: 'ironMine',
     type: BUILDING,
+    icon: '',
     req: {
       ironDeposit: 1,
-      cave: 5,
     },
     cost: {
       ironDeposit: 1,
-      cave: 5,
+    },
+    linked: {
+      ironMinerJob: 5,
+    },
+    income: {},
+  },
+  {
+    name: 'iron',
+    type: RAW,
+    icon: '',
+    req: {},
+    cost: {},
+    income: {},
+  },
+  {
+    name: 'ironMinerJob',
+    type: RAW,
+    icon: '',
+    req: {
+      ironMine: 1,
+    },
+    cost: {},
+    income: {},
+  },
+  {
+    name: 'ironMiner',
+    type: PICK,
+    icon: '',
+    req: {
+      ironMinerJob: 1,
+    },
+    cost: {
+      villager: 1,
     },
     income: {
-      needed: {
-        villagers: 5,
-      },
       iron: 1,
     },
   },
   {
     name: 'forge',
     type: BUILDING,
+    icon: '',
     req: {
       plain: 2,
     },
     cost: {},
     income: {},
+    isUnlocked: false,
   },
   {
     name: 'equipment',
-    type: RAW,
-    req: {
-      villager: 1,
-    },
-  },
-  {
-    name: 'port',
+    buttonText: 'Buy equipment',
     type: BUILDING,
+    icon: '',
     req: {
-      wood: 200,
-      plain: 10,
+      forge: 1,
     },
     cost: {},
     income: {},
+    isUnlocked: false,
+  },
+  {
+    name: 'harbour',
+    buttonText: 'Construct harbour',
+    type: BUILDING,
+    icon: '',
+    req: {
+      wood: 50,
+      plain: 10,
+    },
+    cost: {
+      wood: 50,
+      plain: 10,
+    },
+    income: {},
+    isUnlocked: false,
   },
   {
     name: 'ship',
     type: BUILDING,
+    icon: '',
     req: {
       port: 1,
     },
@@ -124,5 +270,32 @@ export const { initialState, buildings, picks } = createResources(
       plain: 5,
     },
     income: {},
+  },
+  {
+    name: 'forest',
+    type: RAW,
+    icon: forestIcon,
+    req: {},
+    cost: {},
+    income: {},
+    isUnlocked: true,
+  },
+  {
+    name: 'plain',
+    type: RAW,
+    icon: plainIcon,
+    req: {},
+    cost: {},
+    income: {},
+    isUnlocked: true,
+  },
+  {
+    name: 'cave',
+    type: RAW,
+    icon: caveIcon,
+    req: {},
+    cost: {},
+    income: {},
+    isUnlocked: true,
   }
 );
