@@ -1,7 +1,8 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { Content, Grid, Col, Row } from 'native-base';
-import { compose } from 'recompose';
+import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 import { changeTheme, reset } from '../redux/settings/action';
 import { selectTheme } from '../redux/settings/selector';
@@ -40,7 +41,7 @@ const styles = EStyleSheet.create({
   input: { flex: 1, textAlign: 'center' },
 });
 
-const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, reset }) => (
+const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, validateWipe }) => (
   <Content style={styles.container}>
     <Text style={styles.title}>Main settings</Text>
     <Grid>
@@ -87,7 +88,7 @@ const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, reset }) => (
           <Text>Delete current save.</Text>
         </Col>
         <Col style={styles.content}>
-          <Button text="Wipe data" onPress={() => reset()} />
+          <Button text="Wipe data" onPress={validateWipe} />
         </Col>
       </Row>
     </Grid>
@@ -109,5 +110,22 @@ export default compose(
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )
+  ),
+  withHandlers({
+    validateWipe: props => () => {
+      Alert.alert(
+        'Validation',
+        'Do you really want to wipe data ?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          { text: 'OK', onPress: () => props.reset() },
+        ],
+        { cancelable: false }
+      );
+    },
+  })
 )(Settings);
