@@ -7,6 +7,9 @@ import caveIcon from '../assets/cave.png';
 import plainIcon from '../assets/prairie.png';
 import scienceIcon from '../assets/idea.png';
 import labIcon from '../assets/chemistry.png';
+import forgeIcon from '../assets/blacksmith.png';
+import harbourIcon from '../assets/lighthouse.png';
+import sawmillIcon from '../assets/saw.png';
 
 const BUILDING = 'BUILDING';
 const PICK = 'PICK';
@@ -96,11 +99,11 @@ export const {
     name: 'sawmill',
     buttonText: 'Construct a sawmill',
     type: BUILDING,
-    icon: '',
+    icon: sawmillIcon,
     req: {
       wood: 20,
     },
-    initialValue: 1,
+    // initialValue: 1,
     cost: {
       wood: 20,
       forest: 5,
@@ -174,6 +177,7 @@ export const {
   },
   {
     name: 'ironMine',
+    buttonText: 'Iron mine',
     type: BUILDING,
     icon: '',
     req: {
@@ -221,12 +225,17 @@ export const {
   },
   {
     name: 'forge',
+    buttonText: 'Create a forge',
     type: BUILDING,
-    icon: '',
+    icon: forgeIcon,
     req: {
       plain: 2,
     },
-    cost: {},
+    cost: {
+      wood: 100,
+      iron: 10,
+      plain: 5,
+    },
     income: {},
     isUnlocked: false,
   },
@@ -246,7 +255,7 @@ export const {
     name: 'harbour',
     buttonText: 'Construct harbour',
     type: BUILDING,
-    icon: '',
+    icon: harbourIcon,
     req: {
       wood: 50,
       plain: 10,
