@@ -26,22 +26,52 @@ const styles = EStyleSheet.create({
     flexWrap: 'wrap',
   },
   text: {
-    color: '$textColor',
+    marginLeft: 10,
     textAlign: 'center',
   },
 });
+
+const itemStyle = EStyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    marginLeft: 10,
+    borderColor: '$borderColor',
+    borderWidth: '$borderWidth',
+    borderRadius: '$borderRadius',
+    padding: 5,
+  },
+  name: {
+    marginRight: 5,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+  },
+});
+
+const ResourceItem = ({ resource, stateResources }) => (
+  <View style={itemStyle.container}>
+    <Text style={itemStyle.name}>{stateResources[resource.name].value}</Text>
+    {resource.icon && <Image style={itemStyle.icon} source={resource.icon} />}
+    {!resource.icon && <Text>{`${resource.name}`}</Text>}
+  </View>
+);
+ResourceItem.propTypes = {
+  resource: PropTypes.shape({
+    name: PropTypes.string,
+  }).isRequired,
+  stateResources: PropTypes.object.isRequired,
+};
 
 const LogContainer = ({ resources, unlockedResources, logs }) => (
   <View style={styles.container}>
     <View style={styles.resourceContainer}>
       {unlockedResources.map(resource => (
-        <Text key={resource.name} style={styles.text}>
-          {resources[resource.name].value}
-          {resource.icon && (
-            <Image style={{ width: 24, height: 24 }} source={resource.icon} />
-          )}
-          {!resource.icon && ` ${resource.name}`}
-        </Text>
+        <ResourceItem
+          key={resource.name}
+          resource={resource}
+          stateResources={resources}
+        />
       ))}
     </View>
     <ScrollView style={styles.logContainer}>
