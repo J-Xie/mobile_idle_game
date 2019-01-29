@@ -5,6 +5,7 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import PopoverTooltip from 'react-native-popover-tooltip';
 import {
   selectResources,
   selectUnlockedResources,
@@ -50,11 +51,20 @@ const itemStyle = EStyleSheet.create({
 });
 
 const ResourceItem = ({ resource, stateResources }) => (
-  <View style={itemStyle.container}>
-    <Text style={itemStyle.name}>{stateResources[resource.name].value}</Text>
-    {resource.icon && <Image style={itemStyle.icon} source={resource.icon} />}
-    {!resource.icon && <Text>{`${resource.name}`}</Text>}
-  </View>
+  <PopoverTooltip
+    buttonComponent={
+      <View style={itemStyle.container}>
+        <Text style={itemStyle.name}>
+          {stateResources[resource.name].value}
+        </Text>
+        {resource.icon && (
+          <Image style={itemStyle.icon} source={resource.icon} />
+        )}
+        {!resource.icon && <Text>{`${resource.name}`}</Text>}
+      </View>
+    }
+    items={[{ label: resource.name, onPress: () => {} }]}
+  />
 );
 ResourceItem.propTypes = {
   resource: PropTypes.shape({
