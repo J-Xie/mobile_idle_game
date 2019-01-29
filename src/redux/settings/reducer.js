@@ -1,7 +1,7 @@
-import { CHANGE_THEME } from './action';
+import { CHANGE_THEME, RESET } from './action';
 
 const initialState = {
-  theme: 'light',
+  theme: 'dark',
   autosaveFrequency: 1000,
 };
 
@@ -12,6 +12,8 @@ export default (state = initialState, action) => {
         ...state,
         theme: action.payload.theme,
       };
+    case RESET:
+      return initialState;
     default:
   }
   return state;

@@ -3,19 +3,28 @@ import EStyleSheet from 'react-native-extended-stylesheet';
 import { Content, Grid, Col, Row } from 'native-base';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { changeTheme } from '../redux/settings/action';
+import { changeTheme, reset } from '../redux/settings/action';
 import { selectTheme } from '../redux/settings/selector';
 
 import { changeMaxLogs } from '../redux/resource/action';
 import { selectMaxLogs } from '../redux/resource/selector';
 
-import { TextInput, Button, Text } from './components';
+import { TextInput, Button, Text, Divider } from './components';
 
 const styles = EStyleSheet.create({
   container: {
     backgroundColor: '$bgColor',
   },
+  row: {
+    marginBottom: 15,
+  },
   title: {
+    fontSize: 25,
+    marginTop: 20,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  colTitle: {
     flex: 1,
     justifyContent: 'center',
     marginLeft: 10,
@@ -31,12 +40,14 @@ const styles = EStyleSheet.create({
   input: { flex: 1, textAlign: 'center' },
 });
 
-const Settings = ({ maxLogs, theme, setMaxLogs, setTheme }) => (
+const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, reset }) => (
   <Content style={styles.container}>
+    <Text style={styles.title}>Main settings</Text>
     <Grid>
-      <Row>
-        <Col style={styles.title}>
-          <Text>Change log number</Text>
+      <Row style={styles.row}>
+        <Col style={styles.colTitle}>
+          <Text style={{ marginBottom: 4 }}>Change log number</Text>
+          <Text>Defines the number of log displayed.</Text>
         </Col>
         <Col style={styles.content}>
           {maxLogs && (
@@ -50,9 +61,11 @@ const Settings = ({ maxLogs, theme, setMaxLogs, setTheme }) => (
           )}
         </Col>
       </Row>
-      <Row>
-        <Col style={styles.title}>
-          <Text>Change theme</Text>
+      <Divider style={{ flex: 1, justifyContent: 'center' }} />
+      <Row style={styles.row}>
+        <Col style={styles.colTitle}>
+          <Text style={{ marginBottom: 4 }}>Change theme</Text>
+          <Text>Changes the main colors of the app.</Text>
         </Col>
         <Col style={styles.content}>
           <Button
@@ -67,6 +80,16 @@ const Settings = ({ maxLogs, theme, setMaxLogs, setTheme }) => (
           />
         </Col>
       </Row>
+      <Divider />
+      <Row style={styles.row}>
+        <Col style={styles.colTitle}>
+          <Text style={{ marginBottom: 4 }}>Wipe data</Text>
+          <Text>Delete current save.</Text>
+        </Col>
+        <Col style={styles.content}>
+          <Button text="Wipe data" onPress={() => reset()} />
+        </Col>
+      </Row>
     </Grid>
   </Content>
 );
@@ -79,6 +102,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   setMaxLogs: changeMaxLogs,
   setTheme: changeTheme,
+  reset,
 };
 
 export default compose(
