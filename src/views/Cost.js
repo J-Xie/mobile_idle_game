@@ -9,6 +9,9 @@ const styles = EStyleSheet.create({
     textAlign: 'center',
     flexDirection: 'row',
   },
+  text: {
+    color: '$textColor',
+  },
 });
 
 export default ({ costs }) => (
