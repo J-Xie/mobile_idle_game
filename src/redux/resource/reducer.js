@@ -7,6 +7,7 @@ import {
   LOAD_MAP,
   ADD_INCOMES,
 } from './action';
+import { RESET } from '../settings/action';
 
 import {
   initialState as resourceInitialState,
@@ -157,6 +158,8 @@ export default (state = initialState, action) => {
         ...state,
         maxLogs: action.payload.maxLogs,
       };
+    case RESET:
+      return initialState;
     default:
   }
   return state;
