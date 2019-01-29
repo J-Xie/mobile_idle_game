@@ -1,8 +1,9 @@
 import React from 'react';
 import { compose, withProps } from 'recompose';
-import { Button, Text } from 'native-base';
+import { Button } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Text } from '.';
 import { selectTheme } from '../../redux/settings/selector';
 
 const buttonStyle = {
