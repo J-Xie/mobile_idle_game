@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { compose, withProps } from 'recompose';
 import ResourceList from '../ResourceListView';
 import Buildings from '../Buildings';
+import Exploration from '../Exploration';
 import Income from '../Income';
 import Settings from '../Settings';
 import { selectTheme } from '../../redux/settings/selector';
@@ -35,6 +36,7 @@ export default createBottomTabNavigator(
   {
     Resources: { screen: ResourceList },
     Buildings: { screen: Buildings },
+    Exploration: { screen: Exploration },
     Income: { screen: Income },
     Settings: { screen: Settings },
   },
