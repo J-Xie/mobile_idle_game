@@ -1,4 +1,4 @@
-import { compose, lifecycle } from 'recompose';
+import { compose, withPropsOnChange } from 'recompose';
 import { connect } from 'react-redux';
 import { selectMap } from '../redux/resource/selector';
 import { loadMap } from '../redux/resource/action';
@@ -10,11 +10,10 @@ export default compose(
     state => ({ map: selectMap(state) }),
     { loadMap }
   ),
-  lifecycle({
-    componentDidMount() {
-      if (!this.props.map) {
-        this.props.loadMap();
-      }
-    },
+  withPropsOnChange(['map'], props => {
+    if (!props.map) {
+      props.loadMap();
+    }
+    return {};
   })
 )(LoadMap);
