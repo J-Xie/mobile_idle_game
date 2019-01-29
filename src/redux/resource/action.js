@@ -1,4 +1,4 @@
-import { sample, reduce, every } from 'lodash';
+import { sample, reduce, every, forEach } from 'lodash';
 import logs from '../../logs/logs';
 import { allResources } from '../../config/resources';
 import { terrains, generateTerrain } from '../../config/maps';
@@ -73,10 +73,15 @@ export const buyResources = ({ type, qty }) => (dispatch, getState) => {
   checkUnlock(type, getState, dispatch);
 };
 
-export const addIncomes = () => ({
-  type: ADD_INCOMES,
-  payload: {},
-});
+export const addIncomes = () => (dispatch, getState) => {
+  dispatch({
+    type: ADD_INCOMES,
+    payload: {},
+  });
+  forEach(allResources, resource =>
+    checkUnlock(resource.name, getState, dispatch)
+  );
+};
 
 export const loadMap = (size = 1) => ({
   type: LOAD_MAP,
