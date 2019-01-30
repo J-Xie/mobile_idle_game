@@ -1,6 +1,7 @@
-import { reduce } from 'lodash';
+import { reduce, uniq } from 'lodash';
 import { allResources } from '../../config/resources';
 import { UNLOCK_RESOURCES } from '../resource/action';
+import { RESET } from '../settings/action';
 
 const initialState = reduce(
   allResources,
@@ -16,7 +17,9 @@ const initialState = reduce(
 export default (state = initialState, action) => {
   switch (action.type) {
     case UNLOCK_RESOURCES:
-      return [...state, ...action.payload.resources];
+      return uniq([...state, ...action.payload.resources]);
+    case RESET:
+      return initialState;
     default:
   }
   return state;

@@ -21,8 +21,7 @@ export const selectUnlockedBuildingNames = createSelector(
 
 export const selectUnlockedBuildings = createSelector(
   selectUnlockedBuildingNames,
-  resourceNames =>
-    map(resourceNames, resourceName => allResources[resourceName])
+  resourceNames => map(resourceNames, resourceName => buildings[resourceName])
 );
 
 export const selectUnlockedPicks = state =>

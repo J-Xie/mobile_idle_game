@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 
 import persistConfig from '../config/persist';
 
-import rootReducer from './root/rootReducer';
+import rootReducer from './rootReducer';
 
 const createReduxStore = () => {
   const middlewares = [thunk];

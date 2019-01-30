@@ -90,8 +90,11 @@ BuildingsView.propTypes = {
 };
 
 export default compose(
-  connect(state => ({
-    resources: selectResources(state),
-    unlockedBuildings: selectUnlockedBuildings(state),
-  }))
+  connect(
+    state =>
+      console.log(state) || {
+        resources: selectResources(state),
+        unlockedBuildings: selectUnlockedBuildings(state),
+      }
+  )
 )(BuildingsView);
