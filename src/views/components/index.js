@@ -3,3 +3,4 @@ export { default as Button } from './Button';
 export { default as Text } from './Text';
 export { default as ProgressButton } from './ProgressButton';
 export { default as Divider } from './Divider';
+export { default as Tag } from './Tag';

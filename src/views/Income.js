@@ -1,14 +1,20 @@
 import React from 'react';
+import { reduce, map } from 'lodash';
 import { View } from 'react-native';
+import { Grid, Col, Row } from 'native-base';
 
-import { compose, withState, withHandlers, withProps } from 'recompose';
+import {
+  compose,
+  withState,
+  withHandlers,
+  withProps,
+  lifecycle,
+} from 'recompose';
+import { connect } from 'react-redux';
+import { incomes, allResources } from '../config/resources';
+import { selectResources } from '../redux/resource/selector';
 
 import { Text } from './components';
-
-// const picksMap = {
-//   wood: {},
-//   science: {},
-// };
 
 // const roles = {
 //   lumberjack: {},
@@ -23,19 +29,47 @@ import { Text } from './components';
 //   liner: {},
 // };
 
-// const resourceIds = ['hut', 'study'];
+// const incomes = reduce();
 
 const Income = () => (
-  <View>
-    <Text>Hello world !</Text>
-  </View>
+  <Grid>
+    <Row>
+      <Col size={1}>
+        <Text>Resource</Text>
+      </Col>
+      <Col size={1}>
+        <Text>Income</Text>
+      </Col>
+      <Col size={1}>
+        <Text>Total /s</Text>
+      </Col>
+    </Row>
+    {/* {map(allResources, resource => (
+      <Row key={resource.name} size={}>
+        <Col size={1}>
+          <Text>{resource.name}</Text>
+        </Col>
+        <Col size={1}>
+          {map(resource.income, (value, key) => (
+            <Text key={key}>
+              {key}: {value}
+            </Text>
+          ))}
+        </Col>
+        <Col size={1}>
+          <Text>aze</Text>
+        </Col>
+      </Row>
+    ))} */}
+  </Grid>
 );
 
 export default compose(
-  withState('counter', 'setCounter', 0),
+  withState('incomes', 'setIncomes', {}),
   withHandlers({
-    onIncrement: props => payload => props.setCounter(props.counter + 1),
-    onDecrement: props => () => props.setCounter(props.counter + 2),
+    setTotalIncomes: props => totalIncomes => props.setIncomes(totalIncomes),
+    // onIncrement: props => payload => props.setCounter(props.counter + 1),
+    // onDecrement: props => () => props.setCounter(props.counter + 2),
   }),
   withProps(props => ({
     title: `TITLE :: ${props.counter}`,

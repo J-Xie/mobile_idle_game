@@ -22,7 +22,7 @@ const styles = EStyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'column',
-    paddingTop: 30,
+    paddingTop: 20,
   },
   button: {
     margin: 'auto',
@@ -37,7 +37,7 @@ const styles = EStyleSheet.create({
     textAlign: 'center',
   },
   addMarge: {
-    margin: 10,
+    margin: 5,
   },
 });
 
@@ -54,7 +54,7 @@ const BuildingView = ({ building, buyResources }) =>
         text={building.buttonText}
         onPress={() => buyResources({ type: building.name, qty: 1 })}
       />
-      <Cost costs={building.cost} />
+      <Cost style={{ marginLeft: 10 }} costs={building.cost} />
     </View>
   );
 const Building = compose(

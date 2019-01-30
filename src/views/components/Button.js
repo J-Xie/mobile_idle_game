@@ -3,7 +3,7 @@ import { compose, withProps } from 'recompose';
 import { Button } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Text } from '.';
+import Text from './Text';
 import { selectTheme } from '../../redux/settings/selector';
 
 const buttonStyle = {

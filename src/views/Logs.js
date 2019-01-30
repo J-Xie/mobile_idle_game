@@ -12,7 +12,7 @@ import {
   selectLogs,
 } from '../redux/resource/selector';
 
-import { Text } from './components';
+import { Text, Tag } from './components';
 
 const styles = EStyleSheet.create({
   container: {
@@ -53,15 +53,15 @@ const itemStyle = EStyleSheet.create({
 const ResourceItem = ({ resource, stateResources }) => (
   <PopoverTooltip
     buttonComponent={
-      <View style={itemStyle.container}>
+      <Tag>
         <Text style={itemStyle.name}>
           {stateResources[resource.name].value}
         </Text>
-        {resource.icon && (
+        {Boolean(resource.icon) && (
           <Image style={itemStyle.icon} source={resource.icon} />
         )}
         {!resource.icon && <Text>{`${resource.name}`}</Text>}
-      </View>
+      </Tag>
     }
     items={[{ label: resource.name, onPress: () => {} }]}
   />

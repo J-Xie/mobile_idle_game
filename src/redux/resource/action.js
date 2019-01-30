@@ -13,10 +13,10 @@ export const LOAD_MAP = 'LOAD_MAP';
 export const CHANGE_MAX_LOGS = 'CHANGE_MAX_LOGS';
 export const UNLOCK_RESOURCES = 'UNLOCK_RESOURCES';
 
-export const unlockResources = resources => ({
+export const unlockResources = resourceNames => ({
   type: UNLOCK_RESOURCES,
   payload: {
-    resources,
+    resources: resourceNames,
   },
 });
 

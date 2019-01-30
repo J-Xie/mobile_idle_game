@@ -8,7 +8,7 @@ import {
   setPropTypes,
   defaultProps,
 } from 'recompose';
-import { Text } from '..';
+import Text from '../Text';
 
 import withControlledInterval from '../../../hoc/withControllerInterval';
 
@@ -18,7 +18,7 @@ const Progress = ({ percent, children }) => (
       marginTop: 10,
       minHeight: 50,
       minWidth: 10,
-      backgroundColor: 'transparent',
+      backgroundColor: 'black',
       borderRadius: 5,
       borderColor: 'white',
     }}

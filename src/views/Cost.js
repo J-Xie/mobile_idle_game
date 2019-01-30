@@ -14,8 +14,8 @@ const styles = EStyleSheet.create({
   },
 });
 
-export default ({ costs }) => (
-  <View style={styles.container}>
+export default ({ costs, style }) => (
+  <View style={[styles.container, style]}>
     <Text>Cost: </Text>
     <View>
       {Object.keys(costs).map(key => (
