@@ -41,22 +41,21 @@ const styles = EStyleSheet.create({
   },
 });
 
-const BuildingView = ({ building, buyResources }) =>
-  console.log(building.cost) || (
-    <View
-      key={building.name}
-      style={{
-        flexDirection: 'row',
-        marginBottom: 15,
-      }}
-    >
-      <Button
-        text={building.buttonText}
-        onPress={() => buyResources({ type: building.name, qty: 1 })}
-      />
-      <Cost style={{ marginLeft: 10 }} costs={building.cost} />
-    </View>
-  );
+const BuildingView = ({ building, buyResources }) => (
+  <View
+    key={building.name}
+    style={{
+      flexDirection: 'row',
+      marginBottom: 15,
+    }}
+  >
+    <Button
+      text={building.buttonText}
+      onPress={() => buyResources({ type: building.name, qty: 1 })}
+    />
+    <Cost style={{ marginLeft: 10 }} costs={building.cost} />
+  </View>
+);
 const Building = compose(
   connect(
     null,
@@ -90,11 +89,8 @@ BuildingsView.propTypes = {
 };
 
 export default compose(
-  connect(
-    state =>
-      console.log(state) || {
-        resources: selectResources(state),
-        unlockedBuildings: selectUnlockedBuildings(state),
-      }
-  )
+  connect(state => ({
+    resources: selectResources(state),
+    unlockedBuildings: selectUnlockedBuildings(state),
+  }))
 )(BuildingsView);
