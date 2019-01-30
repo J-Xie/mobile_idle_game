@@ -36,6 +36,9 @@ const styles = EStyleSheet.create({
     color: '$textColor',
     textAlign: 'center',
   },
+  addMarge: {
+    margin: 10,
+  },
 });
 
 const BuildingView = ({ building, buyResources }) =>
@@ -64,11 +67,11 @@ const Building = compose(
 const BuildingsView = ({ resources, unlockedBuildings }) => (
   <View style={styles.container}>
     <View>
-      <Text>
-        Population: {resources.villager.value}/
+      <Text style={styles.addMarge}>
+        Villagers: {resources.villager.value}/
         {resources.availableVillager.total}
       </Text>
-      <Text>
+      <Text style={styles.addMarge}>
         Available space: {resources.forest.value} forest {resources.plain.value}{' '}
         plain {resources.cave.value} cave
       </Text>
