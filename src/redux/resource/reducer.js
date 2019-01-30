@@ -87,8 +87,12 @@ const addIncomes = state => {
       reduce(
         resource.income,
         (acc, value, resName) => {
-          const oldValue = get(acc, resName, 0);
-          acc[resName] = value * state[resource.name].value + oldValue;
+          const inc = value * state[resource.name].value;
+
+          if (inc) {
+            const oldValue = get(acc, resName, 0);
+            acc[resName] = oldValue + inc;
+          }
           return acc;
         },
         acc
