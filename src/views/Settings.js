@@ -20,15 +20,15 @@ const styles = EStyleSheet.create({
     marginBottom: 15,
   },
   title: {
-    fontSize: 25,
+    fontSize: 23,
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 23,
     textAlign: 'center',
   },
   colTitle: {
     flex: 1,
     justifyContent: 'center',
-    marginLeft: 10,
+    marginLeft: 15,
     color: '$textColor',
   },
   content: {
@@ -36,7 +36,8 @@ const styles = EStyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     color: '$textColor',
-    marginBottom: 10,
+    marginBottom: 5,
+    marginRight: 15,
   },
   input: { flex: 1, textAlign: 'center' },
 });
@@ -47,8 +48,8 @@ const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, validateWipe }) => (
     <Grid>
       <Row style={styles.row}>
         <Col style={styles.colTitle}>
-          <Text style={{ marginBottom: 4 }}>Change log number</Text>
-          <Text>Defines the number of log displayed.</Text>
+          <Text>Change maximum log number</Text>
+          {/* <Text>Defines the number of log displayed.</Text> */}
         </Col>
         <Col style={styles.content}>
           {maxLogs && (
@@ -65,8 +66,8 @@ const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, validateWipe }) => (
       <Divider style={{ flex: 1, justifyContent: 'center' }} />
       <Row style={styles.row}>
         <Col style={styles.colTitle}>
-          <Text style={{ marginBottom: 4 }}>Change theme</Text>
-          <Text>Changes the main colors of the app.</Text>
+          <Text>Change current theme</Text>
+          {/* <Text>Changes the main colors of the app.</Text> */}
         </Col>
         <Col style={styles.content}>
           <Button
@@ -84,8 +85,8 @@ const Settings = ({ maxLogs, theme, setMaxLogs, setTheme, validateWipe }) => (
       <Divider />
       <Row style={styles.row}>
         <Col style={styles.colTitle}>
-          <Text style={{ marginBottom: 4 }}>Wipe data</Text>
-          <Text>Delete current save.</Text>
+          <Text>Wipe data</Text>
+          {/* <Text>Delete current save.</Text> */}
         </Col>
         <Col style={styles.content}>
           <Button text="Wipe data" onPress={validateWipe} />

@@ -8,6 +8,10 @@ export const selectMaxLogs = state => _.get(state, 'resource.maxLogs');
 export const selectResource = (state, name) => _.get(state, `resource.${name}`);
 export const selectResources = state => state.resource;
 export const selectMap = state => _.get(state.resource, 'map');
+export const selectForest = state => _.get(state.resource, 'forest');
+export const selectPlain = state => _.get(state.resource, 'plain');
+export const selectCave = state => _.get(state.resource, 'cave');
+
 export const selectUnlockedBuildings = state =>
   _.reduce(
     buildings,

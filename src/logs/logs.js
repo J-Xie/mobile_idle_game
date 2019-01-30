@@ -7,4 +7,8 @@ export default {
     'You fell walking and decided to pick up that evil branch with you.',
     'A wild tree branch appeared.',
   ],
+  villager: [
+    'A villager randomly stopped there.',
+    'Someone arrived in the night.',
+  ],
 };
