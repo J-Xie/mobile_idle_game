@@ -1,11 +1,12 @@
 import { sample, reduce, every, forEach } from 'lodash';
 import logs from '../../logs/logs';
-import { allResources } from '../../config/resources';
+import { allResources, unlockDependency } from '../../config/resources';
 import { terrains, generateTerrain } from '../../config/maps';
 import { selectResources } from './selector';
 
 export const ADD_RESOURCES = 'ADD_RESOURCES';
 export const BUY_RESOURCES = 'BUY_RESOURCES';
+export const ADD_MULT_RESOURCES = 'ADD_MULT_RESOURCES';
 export const ADD_INCOMES = 'ADD_INCOMES';
 
 export const LOAD_MAP = 'LOAD_MAP';
@@ -24,19 +25,19 @@ const checkUnlock = (resType, getState, dispatch) => {
   const state = getState();
   const resourcesState = selectResources(state);
 
+  // console.log('check', resType, unlockDependency[resType]);
   const resourcesToUnlock = reduce(
-    allResources,
-    (acc, resource, name) => {
-      const rState = resourcesState[name];
+    unlockDependency[resType],
+    (acc, resource) => {
+      const rState = resourcesState[resource.name];
       if (
-        resource.req[resType] &&
         !rState.isUnlocked &&
         every(
           resource.req,
           (value, resName) => resourcesState[resName].value >= value
         )
       ) {
-        acc.push(name);
+        acc.push(resource.name);
       }
       return acc;
     },
@@ -46,6 +47,17 @@ const checkUnlock = (resType, getState, dispatch) => {
   if (resourcesToUnlock.length > 0) {
     dispatch(unlockResources(resourcesToUnlock));
   }
+};
+
+export const addMultResources = incomes => (dispatch, getState) => {
+  dispatch({
+    type: ADD_MULT_RESOURCES,
+    payload: incomes,
+  });
+
+  forEach(incomes, (value, resName) =>
+    checkUnlock(resName, getState, dispatch)
+  );
 };
 
 export const addResources = ({ type, qty }) => (dispatch, getState) => {

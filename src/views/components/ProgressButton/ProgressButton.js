@@ -17,9 +17,11 @@ const Progress = ({ percent, children }) => (
     style={{
       marginTop: 10,
       minHeight: 50,
-      minWidth: 10,
-      backgroundColor: 'black',
+      minWidth: 100,
+      width: 250,
+      // backgroundColor: 'black',
       borderRadius: 5,
+      borderWidth: 1,
       borderColor: 'white',
     }}
   >
@@ -84,13 +86,13 @@ export default compose(
       props.setCd(newCd);
       if (!newCd) {
         stopCountdown();
+        props.onPress();
       }
     },
-    100
+    10
   ),
   withHandlers({
     onPress: props => () => {
-      props.onPress();
       props.setCd(props.cooldown);
       props.startCountdown();
     },

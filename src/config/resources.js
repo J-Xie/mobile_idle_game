@@ -10,6 +10,7 @@ import labIcon from '../assets/chemistry.png';
 import forgeIcon from '../assets/blacksmith.png';
 import harbourIcon from '../assets/lighthouse.png';
 import sawmillIcon from '../assets/saw.png';
+import villagerIcon from '../assets/farmer.png';
 
 const BUILDING = 'BUILDING';
 const PICK = 'PICK';
@@ -66,6 +67,7 @@ export const {
   picks,
   incomes,
   allResources,
+  unlockDependency,
 } = createResources(
   {
     name: 'wood',
@@ -97,7 +99,7 @@ export const {
   },
   {
     name: 'sawmill',
-    buttonText: 'Construct a sawmill',
+    buttonText: 'Build sawmill',
     type: BUILDING,
     icon: sawmillIcon,
     req: {
@@ -111,13 +113,13 @@ export const {
     isUnlocked: false,
     linked: {},
     income: {
-      wood: 5,
+      wood: 1,
     },
   },
   {
     name: 'villager',
     type: RAW,
-    icon: '',
+    icon: villagerIcon,
     req: {
       hut: 1,
     },
@@ -154,7 +156,7 @@ export const {
   },
   {
     name: 'laboratory',
-    buttonText: 'Create a laboratory',
+    buttonText: 'Create laboratory',
     type: BUILDING,
     icon: labIcon,
     req: {
@@ -225,7 +227,7 @@ export const {
   },
   {
     name: 'forge',
-    buttonText: 'Create a forge',
+    buttonText: 'Create forge',
     type: BUILDING,
     icon: forgeIcon,
     req: {

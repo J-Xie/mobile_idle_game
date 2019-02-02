@@ -8,6 +8,21 @@ export const activeTint = {
   dark: 'white',
 };
 
+export const notifBg = {
+  dark: {
+    success: 'green',
+    info: 'powderblue',
+    warning: 'orange',
+    error: 'red',
+  },
+  light: {
+    success: 'green',
+    info: 'powderblue',
+    warning: 'orange',
+    error: 'red',
+  },
+};
+
 export default {
   light: {
     ...common,
@@ -15,6 +30,9 @@ export default {
     $bgColor: 'white',
     $textColor: 'black',
     $borderColor: 'black',
+
+    $bgColorLight: '#81807E',
+    $bgColorDark: '#31302B',
   },
   dark: {
     ...common,
@@ -22,5 +40,7 @@ export default {
     $bgColor: '#333',
     $textColor: 'white',
     $borderColor: 'white',
+    $bgColorLight: '#81807E',
+    $bgColorDark: '#31302B',
   },
 };

@@ -1,4 +1,4 @@
-import { every, reduce, get } from 'lodash';
+import { every, reduce, get, map } from 'lodash';
 import {
   CHANGE_MAX_LOGS,
   UNLOCK_RESOURCES,
@@ -6,6 +6,7 @@ import {
   BUY_RESOURCES,
   LOAD_MAP,
   ADD_INCOMES,
+  ADD_MULT_RESOURCES,
 } from './action';
 import { RESET } from '../settings/action';
 
@@ -118,6 +119,20 @@ const addIncomes = state => {
   );
 };
 
+const addMultResources = (state, action) =>
+  reduce(
+    action.payload,
+    (acc, value, resName) => {
+      acc[resName] = {
+        ...acc[resName],
+        value: acc[resName].value + value.value,
+        total: acc[resName].total + value.total,
+      };
+      return acc;
+    },
+    { ...state }
+  );
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case ADD_RESOURCES:
@@ -137,6 +152,8 @@ export default (state = initialState, action) => {
       return buyResources(state, action);
     case ADD_INCOMES:
       return addIncomes(state);
+    case ADD_MULT_RESOURCES:
+      return addMultResources(state, action);
     case LOAD_MAP:
       return {
         ...state,
@@ -144,17 +161,17 @@ export default (state = initialState, action) => {
         forest: {
           ...state.forest,
           value: 10,
-          total: action.payload.map.forest,
+          total: 10,
         },
         plain: {
           ...state.plain,
           value: 15,
-          total: action.payload.map.plain,
+          total: 15,
         },
         cave: {
           ...state.cave,
           value: 5,
-          total: action.payload.map.cave,
+          total: 5,
         },
       };
     case CHANGE_MAX_LOGS:

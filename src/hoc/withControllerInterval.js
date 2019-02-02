@@ -20,7 +20,7 @@ export default (startPropsName, stopPropsName, ft, delay) => BaseComponent =>
         }
 
         const date = Date.now();
-        this.timeout = setInterval(() => {
+        this.timeout = setTimeout(() => {
           ft(this.props, Date.now() - date, this.stopCountdown);
           this.start();
         }, delay);

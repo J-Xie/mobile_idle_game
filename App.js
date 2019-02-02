@@ -7,6 +7,7 @@ import AppNavigator from './src/views/navigation/AppNavigator';
 import LoadMap from './src/views/LoadMap';
 import Theme from './src/views/Theme';
 import Store, { persistor } from './src/redux';
+import { NotifProvider } from './src/views/components/Notif';
 
 const AppContent = createAppContainer(AppNavigator);
 
@@ -15,7 +16,9 @@ export default () => (
     <PersistGate persistor={persistor}>
       <Theme>
         <LoadMap>
-          <AppContent />
+          <NotifProvider>
+            <AppContent />
+          </NotifProvider>
         </LoadMap>
       </Theme>
     </PersistGate>
