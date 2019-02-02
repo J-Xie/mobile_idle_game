@@ -1,6 +1,11 @@
 import { get, map, reduce } from 'lodash';
 import { createSelector } from 'reselect';
-import { buildings, picks, allResources } from '../../config/resources';
+import {
+  buildings,
+  picks,
+  incomes,
+  allResources,
+} from '../../config/resources';
 import { selectUnlockedResourceNames } from '../unlockedResources/selector';
 
 export const selectWood = state => get(state, 'resource.wood');
@@ -21,7 +26,30 @@ export const selectUnlockedBuildingNames = createSelector(
 
 export const selectUnlockedBuildings = createSelector(
   selectUnlockedBuildingNames,
-  resourceNames => map(resourceNames, resourceName => buildings[resourceName])
+  resourceNames =>
+    map(resourceNames, resourceName => allResources[resourceName])
+);
+
+export const selectCurrentIncomes = createSelector(
+  selectResources,
+  stateRes =>
+    reduce(
+      incomes,
+      (acc, resDesc) => {
+        if (stateRes[resDesc.name].value > 0) {
+          acc.push({
+            name: resDesc.name,
+            incomes: map(resDesc.income, (value, resName) => ({
+              type: resName,
+              perUnit: value,
+              total: value * stateRes[resDesc.name].value,
+            })),
+          });
+        }
+        return acc;
+      },
+      []
+    )
 );
 
 export const selectUnlockedPicks = state =>
