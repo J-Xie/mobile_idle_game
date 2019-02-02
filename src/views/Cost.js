@@ -1,28 +1,36 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { View } from 'react-native';
+import { View, ViewPropTypes } from 'react-native';
 import { Text } from './components';
 
 const styles = EStyleSheet.create({
   container: {
-    margin: 'auto',
-    textAlign: 'center',
     flexDirection: 'row',
+    justifyContent: 'center',
   },
-  text: {
-    color: '$textColor',
+  cost: {
+    textAlign: 'center',
+    marginTop: -4,
+    fontSize: 12,
   },
 });
 
-export default ({ costs, style }) => (
-  <View style={[styles.container, style]}>
-    <Text>Cost: </Text>
-    <View>
+const Costs = ({ costs, style }) => (
+  <View>
+    <View style={[styles.container, style]}>
       {Object.keys(costs).map(key => (
-        <Text key={key}>
-          {costs[key]} {key}
-        </Text>
+        <Text style={styles.cost} key={key}>{`${costs[key]} ${key}  `}</Text>
       ))}
     </View>
   </View>
 );
+Costs.propTypes = {
+  costs: PropTypes.object.isRequired,
+  style: ViewPropTypes.style,
+};
+Costs.defaultProps = {
+  style: null,
+};
+
+export default Costs;

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Button, Text } from './components';
@@ -13,6 +13,7 @@ import {
   selectUnlockedBuildings,
   selectResources,
 } from '../redux/resource/selector';
+import { allResources } from '../config/resources';
 
 const styles = EStyleSheet.create({
   container: {
@@ -21,8 +22,10 @@ const styles = EStyleSheet.create({
   actions: {
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'column',
-    paddingTop: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    marginBottom: 10,
   },
   button: {
     margin: 'auto',
@@ -39,21 +42,29 @@ const styles = EStyleSheet.create({
   addMarge: {
     margin: 5,
   },
+  icon: {
+    width: 24,
+    height: 24,
+  },
 });
 
 const BuildingView = ({ building, buyResources }) => (
   <View
     key={building.name}
     style={{
-      flexDirection: 'row',
-      marginBottom: 15,
+      justifyContent: 'center',
+      alignItems: 'center',
     }}
   >
     <Button
       text={building.buttonText}
       onPress={() => buyResources({ type: building.name, qty: 1 })}
+      style={styles.addMarge}
     />
-    <Cost style={{ marginLeft: 10 }} costs={building.cost} />
+    <Cost
+      style={{ flexDirection: 'row', marginLeft: 10 }}
+      costs={building.cost}
+    />
   </View>
 );
 const Building = compose(
@@ -65,16 +76,16 @@ const Building = compose(
 
 const BuildingsView = ({ resources, unlockedBuildings }) => (
   <View style={styles.container}>
-    <View>
+    {/* <View>
       <Text style={styles.addMarge}>
-        Villagers: {resources.villager.value}/
-        {resources.availableVillager.total}
+        {resources.villager.value}/{resources.availableVillager.total}
+        <Image style={styles.icon} source={allResources.villager.icon} />
       </Text>
       <Text style={styles.addMarge}>
         Available space: {resources.forest.value} forest {resources.plain.value}{' '}
         plain {resources.cave.value} cave
       </Text>
-    </View>
+    </View> */}
     <View style={styles.actions}>
       {unlockedBuildings.map(building => (
         <Building key={building.name} building={building} />

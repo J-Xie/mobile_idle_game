@@ -43,10 +43,14 @@ const itemStyle = EStyleSheet.create({
   },
   name: {
     marginRight: 5,
+    fontSize: 12,
+  },
+  labelSize: {
+    fontSize: 12,
   },
   icon: {
-    width: 24,
-    height: 24,
+    width: 15,
+    height: 15,
   },
 });
 
@@ -60,7 +64,9 @@ const ResourceItem = ({ resource, stateResources }) => (
         {Boolean(resource.icon) && (
           <Image style={itemStyle.icon} source={resource.icon} />
         )}
-        {!resource.icon && <Text>{`${resource.name}`}</Text>}
+        {!resource.icon && (
+          <Text style={itemStyle.labelSize}>{`${resource.name}`}</Text>
+        )}
       </Tag>
     }
     items={[{ label: resource.name, onPress: () => {} }]}

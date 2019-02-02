@@ -8,7 +8,7 @@ import { selectTheme } from '../../redux/settings/selector';
 
 const buttonStyle = {
   light: {
-    info: true,
+    dark: true,
     bordered: true,
   },
   dark: {
@@ -22,7 +22,7 @@ const buttonStyle = {
 
 const ThemedButton = ({ text, style, ...props }) => (
   <Button style={[style]} {...props}>
-    <Text>{text}</Text>
+    <Text>{text.toUpperCase()}</Text>
   </Button>
 );
 
