@@ -9,7 +9,7 @@ export const terrains = [
     depositCoef: 1,
     deposit: [
       {
-        name: 'iron',
+        name: 'ironDeposit',
         coefs: [
           {
             minSize: 0,
@@ -23,7 +23,7 @@ export const terrains = [
         coef: 1,
       },
       {
-        name: 'gold',
+        name: 'goldDeposit',
         coefs: [
           {
             minSize: 0,
@@ -44,7 +44,36 @@ export const terrains = [
     cave: 0.5,
     plain: 0.3,
     depositCoef: 1.5,
-    deposit: [],
+    deposit: [
+      {
+        name: 'ironDeposit',
+        coefs: [
+          {
+            minSize: 0,
+            coef: 0.4,
+          },
+          {
+            minSize: 2,
+            coef: 0.6,
+          },
+        ],
+        coef: 1,
+      },
+      {
+        name: 'goldDeposit',
+        coefs: [
+          {
+            minSize: 0,
+            coef: 0.2,
+          },
+          {
+            minSize: 3,
+            coef: 0.3,
+          },
+        ],
+        coef: 0.3,
+      },
+    ],
   },
 ];
 
@@ -58,18 +87,18 @@ export const generateTerrain = (distrib, size) => {
   const plain = Math.floor(total * distrib.plain);
 
   const totalDeposit = distrib.depositCoef * depositCoef(size);
+  console.log('total deposit : ', totalDeposit);
 
   const depositConfig = reduce(
     distrib.deposit,
     (acc, { name, coefs }) => {
       const config = findLast(coefs, elem => elem.minSize <= size);
-      acc[name] = config.coef * totalDeposit;
+      acc[name] = Math.ceil(config.coef * totalDeposit * 2);
       return acc;
     },
     {}
   );
 
-  console.log(':::', depositConfig);
   return {
     type: distrib.name,
     forest,

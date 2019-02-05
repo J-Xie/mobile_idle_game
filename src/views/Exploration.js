@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { compose, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
-import { find, sample } from 'lodash';
 
 import {
   selectResource,
@@ -13,13 +12,8 @@ import {
 } from '../redux/resource/selector';
 
 import { Text, ProgressButton } from './components';
-import { withNotif, withAddNotif } from './components/Notif';
-import { explorationNotifs } from '../logs/notifs';
-import {
-  eventTypeRange,
-  generateExplorationEvent,
-  createEvent,
-} from '../config/events';
+import { withAddNotif } from './components/Notif';
+import { createExplorationEvent } from '../config/events';
 import { addMultResources } from '../redux/resource/action';
 
 const styles = EStyleSheet.create({
@@ -41,9 +35,6 @@ const styles = EStyleSheet.create({
 
 const Exploration = ({ forest, plain, cave, onExplore }) => (
   <View style={styles.container}>
-    {/* <View style={styles.actions}>
-      <Button text="Explore island" />
-    </View> */}
     <ProgressButton
       style={{ flex: 1 }}
       text="Explore island"
@@ -57,6 +48,19 @@ const Exploration = ({ forest, plain, cave, onExplore }) => (
     </View>
   </View>
 );
+Exploration.propTypes = {
+  forest: PropTypes.shape({
+    total: PropTypes.number,
+  }).isRequired,
+  plain: PropTypes.shape({
+    total: PropTypes.number,
+  }).isRequired,
+  cave: PropTypes.shape({
+    total: PropTypes.number,
+  }).isRequired,
+  onExplore: PropTypes.func.isRequired,
+};
+
 export default compose(
   connect(
     state => ({
@@ -76,7 +80,7 @@ export default compose(
       stateRes,
       addMultResources: addResources,
     }) => () => {
-      const event = createEvent(map, stateRes);
+      const event = createExplorationEvent(map, stateRes);
       if (event && event.notif) {
         addNotif(event.notif.title, event.notif.message, event.notif.type);
       }

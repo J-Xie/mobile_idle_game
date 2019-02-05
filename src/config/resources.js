@@ -15,6 +15,7 @@ import villagerIcon from '../assets/farmer.png';
 const BUILDING = 'BUILDING';
 const PICK = 'PICK';
 const RAW = 'RAW';
+const JOB = 'JOB';
 
 const createResources = (...resources) =>
   resources.reduce(
@@ -46,6 +47,9 @@ const createResources = (...resources) =>
           break;
         case RAW:
           break;
+        case JOB:
+          acc.jobs[elem.name] = elem;
+          break;
         default:
           throw new Error(`Undefined resource type :: ${JSON.stringify(elem)}`);
       }
@@ -56,6 +60,7 @@ const createResources = (...resources) =>
       buildings: {},
       picks: {},
       incomes: {},
+      jobs: {},
       unlockDependency: {},
       allResources: {},
     }
@@ -103,17 +108,44 @@ export const {
     type: BUILDING,
     icon: sawmillIcon,
     req: {
-      wood: 20,
+      wood: 50,
+      forest: 5,
     },
     // initialValue: 1,
     cost: {
-      wood: 20,
+      wood: 50,
       forest: 5,
     },
-    isUnlocked: false,
-    linked: {},
+    linked: {
+      lumberjackJob: 5,
+    },
+    income: {},
+  },
+  {
+    name: 'lumberjackJob',
+    type: RAW,
+    icon: '',
+    req: {
+      sawmill: 1,
+    },
+    cost: {},
+    income: {},
+  },
+  {
+    name: 'lumberjack',
+    buttonText: 'Form lumberjack',
+    type: JOB,
+    icon: '',
+    req: {
+      lumberjackJob: 1,
+    },
+    cost: {
+      villager: 1,
+      lumberjackJob: 1,
+      science: 10,
+    },
     income: {
-      wood: 1,
+      wood: 0.1,
     },
   },
   {
@@ -163,11 +195,54 @@ export const {
       science: 50,
     },
     cost: {
+      wood: 50,
+      science: 50,
+    },
+    linked: {
+      scientistJob: 5,
+    },
+    income: {},
+  },
+  {
+    name: 'scientistJob',
+    type: RAW,
+    icon: '',
+    req: {
+      laboratory: 1,
+    },
+    cost: {},
+    income: {},
+  },
+  {
+    name: 'scientist',
+    buttonText: 'Form scientist',
+    type: JOB,
+    icon: '',
+    req: {
+      scientistJob: 1,
+    },
+    cost: {
+      villager: 1,
+      scientistJob: 1,
       science: 50,
     },
     income: {
-      science: 1,
+      science: 0.1,
     },
+  },
+  {
+    name: 'recycler',
+    buttonText: 'Build recycler',
+    type: BUILDING,
+    icon: '',
+    req: {
+      science: 150,
+    },
+    cost: {
+      science: 200,
+      plain: 10,
+    },
+    income: {},
   },
   {
     name: 'ironDeposit',
@@ -187,6 +262,7 @@ export const {
     },
     cost: {
       ironDeposit: 1,
+      cave: 5,
     },
     linked: {
       ironMinerJob: 5,
@@ -200,6 +276,8 @@ export const {
     req: {},
     cost: {},
     income: {},
+    isUnlocked: true,
+    initialValue: 50,
   },
   {
     name: 'ironMinerJob',
@@ -213,16 +291,79 @@ export const {
   },
   {
     name: 'ironMiner',
-    type: PICK,
+    buttonText: 'Form miner',
+    type: JOB,
     icon: '',
     req: {
       ironMinerJob: 1,
     },
     cost: {
       villager: 1,
+      ironMinerJob: 1,
+      science: 50,
     },
     income: {
-      iron: 1,
+      iron: 0.1,
+    },
+  },
+  {
+    name: 'goldDeposit',
+    type: RAW,
+    icon: '',
+    req: {},
+    cost: {},
+    income: {},
+  },
+  {
+    name: 'goldMine',
+    buttonText: 'Gold mine',
+    type: BUILDING,
+    icon: '',
+    req: {
+      goldDeposit: 1,
+    },
+    cost: {
+      goldDeposit: 1,
+    },
+    linked: {
+      goldMinerJob: 5,
+    },
+    income: {},
+  },
+  {
+    name: 'gold',
+    type: RAW,
+    icon: '',
+    req: {},
+    cost: {},
+    income: {},
+    isUnlocked: true,
+  },
+  {
+    name: 'goldMinerJob',
+    type: RAW,
+    icon: '',
+    req: {
+      goldMine: 1,
+    },
+    cost: {},
+    income: {},
+  },
+  {
+    name: 'goldMiner',
+    buttonText: 'Form miner',
+    type: JOB,
+    icon: '',
+    req: {
+      goldMinerJob: 1,
+    },
+    cost: {
+      villager: 1,
+      goldMinerJob: 1,
+      science: 50,
+    },
+    income: {
+      iron: 0.1,
     },
   },
   {
@@ -231,11 +372,13 @@ export const {
     type: BUILDING,
     icon: forgeIcon,
     req: {
-      plain: 2,
+      wood: 10,
+      //iron: 15,
+      plain: 5,
     },
     cost: {
-      wood: 100,
-      iron: 10,
+      wood: 10,
+      //iron: 15,
       plain: 5,
     },
     income: {},
@@ -249,9 +392,35 @@ export const {
     req: {
       forge: 1,
     },
-    cost: {},
+    cost: {
+      iron: 5,
+    },
     income: {},
     isUnlocked: false,
+  },
+  {
+    name: 'soldier',
+    buttonText: 'Form soldier',
+    type: JOB,
+    req: {
+      equipment: 10,
+    },
+    cost: {
+      equipment: 15,
+    },
+    income: {},
+  },
+  {
+    name: 'scout',
+    buttonText: 'Form scout',
+    type: JOB,
+    req: {
+      equipment: 5,
+    },
+    cost: {
+      equipment: 10,
+    },
+    income: {},
   },
   {
     name: 'harbour',
@@ -259,11 +428,12 @@ export const {
     type: BUILDING,
     icon: harbourIcon,
     req: {
-      wood: 50,
+      wood: 300,
       plain: 10,
     },
     cost: {
-      wood: 50,
+      wood: 300,
+      science: 200,
       plain: 10,
     },
     income: {},
@@ -274,12 +444,20 @@ export const {
     type: BUILDING,
     icon: '',
     req: {
-      port: 1,
+      harbour: 1,
     },
     cost: {
       wood: 100,
       plain: 5,
     },
+    income: {},
+  },
+  {
+    name: 'coin',
+    type: RAW,
+    icon: '',
+    req: {},
+    cost: {},
     income: {},
   },
   {
