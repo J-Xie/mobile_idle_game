@@ -59,7 +59,7 @@ const ResourceItem = ({ resource, stateResources }) => (
     buttonComponent={
       <Tag>
         <Text style={itemStyle.name}>
-          {stateResources[resource.name].value}
+          {Math.round(stateResources[resource.name].value)}
         </Text>
         {Boolean(resource.icon) && (
           <Image style={itemStyle.icon} source={resource.icon} />

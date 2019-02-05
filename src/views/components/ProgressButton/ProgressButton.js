@@ -19,7 +19,6 @@ const Progress = ({ percent, children }) => (
       minHeight: 50,
       minWidth: 100,
       width: 250,
-      // backgroundColor: 'black',
       borderRadius: 5,
       borderWidth: 1,
       borderColor: 'white',
@@ -51,6 +50,10 @@ const Progress = ({ percent, children }) => (
     </View>
   </View>
 );
+Progress.propTypes = {
+  percent: PropTypes.number.isRequired,
+  children: PropTypes.element.isRequired,
+};
 
 const ProgressButton = ({ text, cd, cooldown, onPress, ProgressComponent }) => (
   <TouchableOpacity onPress={onPress} disabled={cd > 0}>
@@ -89,7 +92,7 @@ export default compose(
         props.onPress();
       }
     },
-    10
+    50
   ),
   withHandlers({
     onPress: props => () => {

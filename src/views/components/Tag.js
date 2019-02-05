@@ -6,6 +6,7 @@ const itemStyle = EStyleSheet.create({
   container: {
     flexDirection: 'row',
     marginLeft: 10,
+    marginBottom: 10,
     borderColor: '$borderColor',
     borderWidth: '$borderWidth',
     borderRadius: '$borderRadius',

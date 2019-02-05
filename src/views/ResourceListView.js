@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import _ from 'lodash';
 import { compose, withHandlers } from 'recompose';
 import { View } from 'react-native';
 

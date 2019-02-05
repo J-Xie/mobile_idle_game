@@ -1,36 +1,112 @@
-// Scale la range des events (nb d'events)
-// Checker disponibilité des espaces
-// Créer events dynamiques
-
-import { map, reduce, sumBy, random } from 'lodash';
-
-// event: {
-//   discovery: () => ({
-//     resFound: {
-//       [resName]: number,
-//     },
-//     resFound: {
-//      [resName]: { value: number, total: number }
-//     },
-//     notif: {
-//       type: string,
-//       title: string,
-//       message: string,
-//     },
-//   }),
-//   range: number,
-// }
-// eventGenerator:(stateMap, stateResources) => event;
+import { map, reduce, sumBy, random, sample } from 'lodash';
+import { allResources } from './resources';
 
 const createRes = (value, total = value) => ({
   value,
   total,
 });
 
+const getSpaceLeft = (stateMap, stateRes, resName) =>
+  stateMap[resName] - stateRes[resName].total;
+
 const createNotifMessage = incomes =>
   map(incomes, (income, resName) => `+ ${income.value} ${resName}`).join(', ');
 
-const availableEvents = [
+// RANDOM EVENTS PART
+const villagerEvents = [
+  {
+    conditions: (stateMap, stateRes) => stateRes.availableVillager.value > 0,
+    incomes: () => ({
+      villager: createRes(1),
+      availableVillager: createRes(-1, 0),
+    }),
+    notif: () => ({
+      type: 'info',
+      title: sample(['New villager.', 'Stranger arrives.']),
+      message: 'Someone arrived',
+    }),
+    range: () => 0.2,
+  },
+  {
+    conditions: (stateMap, stateRes) => stateRes.availableVillager.value > 5,
+    incomes: () => {
+      const qty = random(1, 5);
+      return {
+        villager: createRes(qty),
+        availableVillager: createRes(-qty, 0),
+      };
+    },
+    notif: incomes => ({
+      type: 'info',
+      title: sample(['Extending your population', 'New family.']),
+      message: `A new family arrived in your village. ${createNotifMessage(
+        incomes
+      )}`,
+    }),
+    range: () => 0.2,
+  },
+];
+
+const randomEvents = [
+  {
+    conditions: (stateMap, stateRes) =>
+      stateRes.villager.value >= 1 && stateRes.availableVillager.value >= 5,
+    incomes: (stateMap, stateRes) => {
+      const nbHut = random(1, Math.floor(stateRes.availableVillager.value / 5));
+      return {
+        villager: createRes(-random(1, stateRes.villager.value), 0),
+        availableVillager: createRes(-nbHut * 5, 0),
+        hut: createRes(-nbHut, 0),
+      };
+    },
+    notif: () => ({
+      type: 'error',
+      title: 'Beasts attack.',
+      message: "Some of your huts and villagers didn't survive the attack.",
+    }),
+    range: () => 0.05,
+  },
+  {
+    conditions: (stateMap, stateRes) =>
+      stateRes.wood.value >= 50 && stateRes.iron.value >= 10,
+    incomes: () => ({
+      wood: createRes(-random(20, 50), 0),
+      iron: createRes(-random(1, 5), 0),
+    }),
+    notif: incomes => ({
+      type: 'warning',
+      title: 'Thieves',
+      message: `You discovered some footprints on the ground and found out by following them that some resources are missing. ${createNotifMessage(
+        incomes
+      )}`,
+    }),
+    range: () => 0.05,
+  },
+  {
+    conditions: () => true,
+    incomes: () => {},
+    notif: () => ({
+      type: 'info',
+      title: 'Strange noises',
+      message:
+        'You heard some noises but found nothing but darkness in the end.',
+    }),
+    range: () => 0.02,
+  },
+  {
+    conditions: () => true,
+    incomes: () => {},
+    notif: () => ({
+      type: 'info',
+      title: 'Itinerant merchant',
+      message: '',
+    }),
+    range: () => 0.02,
+  },
+];
+
+// EXPLORATION PART
+const explorationEvents = [
   {
     conditions: (stateMap, stateRes) =>
       stateRes.availableVillager.value >= 5 && stateRes.plain.value >= 5,
@@ -46,6 +122,81 @@ const availableEvents = [
       message: createNotifMessage(incomes),
     }),
     range: () => 0.1,
+  },
+  {
+    conditions: () => true,
+    incomes: () => ({
+      wood: createRes(random(1, 10)),
+    }),
+    notif: incomes => ({
+      type: 'success',
+      title: 'Found some wood.',
+      message: createNotifMessage(incomes),
+    }),
+    range: () => 0.15,
+  },
+  {
+    conditions: (stateMap, stateRes) =>
+      getSpaceLeft(stateMap, stateRes, 'ironDeposit') > 0,
+    incomes: () => ({
+      ironDeposit: createRes(1),
+    }),
+    notif: incomes => ({
+      type: 'success',
+      title: 'Iron deposit found.',
+      message: createNotifMessage(incomes),
+    }),
+    range: () => 0.1,
+  },
+  {
+    conditions: (stateMap, stateRes) =>
+      getSpaceLeft(stateMap, stateRes, 'goldDeposit') > 0,
+    incomes: () => ({
+      goldDeposit: createRes(1),
+    }),
+    notif: incomes => ({
+      type: 'success',
+      title: 'Gold deposit found.',
+      message: createNotifMessage(incomes),
+    }),
+    range: () => 0.1,
+  },
+  {
+    conditions: (stateMap, stateRes) => stateRes.wood > 30,
+    incomes: () => ({
+      wood: createRes(random(-50, -10), 0),
+    }),
+    notif: incomes => ({
+      type: 'warning',
+      title: 'Ambush.',
+      message: createNotifMessage(incomes),
+    }),
+    range: () => 0.1,
+  },
+  {
+    conditions: () => true,
+    incomes: () => {},
+    notif: () => ({
+      type: 'warning',
+      title: 'Safety first.',
+      message:
+        'A best came out of nowhere, your villagers fled as far as possible.',
+    }),
+    range: () => 0.15,
+  },
+  {
+    conditions: (stateMap, stateRes) => stateRes.villager.value > 3,
+    incomes: () => ({
+      villager: createRes(random(-3, -1), 0),
+    }),
+    notif: incomes => ({
+      type: 'error',
+      title: 'Dangerous cave.',
+      message: `Your exploration squad ventured into a cave. Only a few came back from their trip.${createNotifMessage(
+        incomes
+      )}`,
+    }),
+    range: () => 0.05,
   },
 ];
 
@@ -106,26 +257,41 @@ const terrains = [
     },
     defaultValue: 0.1,
   },
+  {
+    name: 'ironDeposit',
+    mapType: {},
+    defaultValue: 10,
+    income: () => ({ ironDeposit: createRes(1) }),
+  },
+  // {
+  //   name: 'goldDeposit',
+  //   mapType: {},
+  //   defaultValue: 10,
+  //   income: () => createRes(1),
+  // },
 ];
 
-const getSpaceLeft = (stateMap, stateRes, resName) =>
-  stateMap[resName] - stateRes[resName].total;
-
-const makeMapEventGenerator = (resName, getRange) =>
-  makeResEventGenerator(
+const makeMapEventGenerator = (
+  resName,
+  getRange,
+  income = (stateMap, stateRes) => ({
+    [resName]: createRes(random(1, getSpaceLeft(stateMap, stateRes, resName))),
+  })
+) => {
+  if (!allResources[resName]) {
+    console.warn('[make-map-event-generator] not defined resources', resName);
+  }
+  return makeResEventGenerator(
     (stateMap, stateRes) => getSpaceLeft(stateMap, stateRes, resName) > 0,
-    (stateMap, stateRes) => ({
-      [resName]: createRes(
-        random(1, getSpaceLeft(stateMap, stateRes, resName))
-      ),
-    }),
-    () => ({
+    income,
+    incomes => ({
       type: 'success',
       title: `${resName} found.`,
-      message: `Found ${resName}`,
+      message: createNotifMessage(incomes),
     }),
     getRange
   );
+};
 
 const genMapRange = (distrib, defaultValue) => stateMap => {
   if (distrib[stateMap.name]) {
@@ -137,11 +303,12 @@ const genMapRange = (distrib, defaultValue) => stateMap => {
 const genMapEvents = terrains.map(terrain =>
   makeMapEventGenerator(
     terrain.name,
-    genMapRange(terrain.mapType, terrain.defaultValue)
+    genMapRange(terrain.mapType, terrain.defaultValue),
+    terrain.income
   )
 );
 
-const genResEvents = availableEvents.map(event =>
+const genResEvents = explorationEvents.map(event =>
   makeResEventGenerator(
     event.conditions,
     event.incomes,
@@ -150,7 +317,30 @@ const genResEvents = availableEvents.map(event =>
   )
 );
 
-const eventGenerators = [...genMapEvents, nothingEvent, ...genResEvents];
+const explorationEventGenerators = [
+  ...genMapEvents,
+  nothingEvent,
+  ...genResEvents,
+];
+
+const genVillagerEvents = villagerEvents.map(event =>
+  makeResEventGenerator(
+    event.conditions,
+    event.incomes,
+    event.notif,
+    event.range
+  )
+);
+const genRandomEvents = randomEvents.map(event =>
+  makeResEventGenerator(
+    event.conditions,
+    event.incomes,
+    event.notif,
+    event.range
+  )
+);
+
+const randomEventGenerators = [...genVillagerEvents, ...genRandomEvents];
 
 const scaleRange = events => {
   const totalRange = sumBy(events, 'range');
@@ -173,7 +363,7 @@ const getRandomEvent = events => {
   return events.find(event => event.range >= rng);
 };
 
-export const createEvent = (stateMap, stateRes) => {
+export const createEvent = eventGenerators => (stateMap, stateRes) => {
   const events = eventGenerators
     .map(generator => generator(stateMap, stateRes))
     .filter(event => event !== null);
@@ -185,137 +375,5 @@ export const createEvent = (stateMap, stateRes) => {
   return event.discovery();
 };
 
-// const eventList = [
-//   {
-//     name: 'forest',
-//     notif: (name, type, discovered) => ({
-//       type,
-//       title: 'Discovered forest space.',
-//       message: `+ ${discovered} forest`,
-//     }),
-//     range: 0.2,
-//   },
-//   {
-//     name: 'nothing',
-//     notif: () => ({
-//       type: 'info',
-//       title: 'Nothing found',
-//       message: 'Nothing :(.',
-//     }),
-//     range: 0.1,
-//   },
-//   {
-//     type: 'success',
-//     name: 'plain',
-//     title: '',
-//     message: msg => msg,
-//     range: 0.2,
-//   },
-//   {
-//     type: 'success',
-//     name: 'cave',
-//     title: '',
-//     message: msg => msg,
-//     range: 0.2,
-//   },
-//   {
-//     type: 'success',
-//     name: 'ironDeposit',
-//     title: '',
-//     message: msg => msg,
-//     range: 0.2,
-//   },
-// ];
-
-// const scaleRange = events => {
-//   const totalRange = sumBy(events, 'range');
-//   return reduce(
-//     events,
-//     (acc, event) => {
-//       acc.events.push({
-//         ...event,
-//         range: (acc.sum + event.range) / totalRange,
-//       });
-//       acc.sum += event.range;
-//       return acc;
-//     },
-//     { sum: 0, events: [] }
-//   ).events;
-// };
-
-// const canBeDiscovered = (stateMap, stateResources, resName) => {
-//   const toDiscover = stateMap[resName] - stateResources[resName].total;
-//   if (toDiscover > 0) {
-//     return true;
-//   }
-//   return false;
-// };
-
-// const createDiscovery = (event, map, stateResources) => {
-//   const discovered = random(
-//     1,
-//     map[event.name] - stateResources[event.name].total
-//   );
-//   return event.notif(discovered);
-// };
-
-// export const createEvents = (stateMap, stateResources) => {
-//   const availableEvents = filter(eventList, event =>
-//     canBeDiscovered(stateMap, stateResources, event.name)
-//   );
-//   const scaledEvents = scaleRange(availableEvents);
-//   const rng = Math.random();
-//   const e = scaledEvents.find(event => event.range >= rng);
-//   // const notif = ;
-//   console.log('event: ', e);
-//   return;
-// };
-
-export const eventTypeRange = [
-  {
-    name: 'success',
-    range: 0.2,
-  },
-  {
-    name: 'info',
-    range: 0.5,
-  },
-  {
-    name: 'warning',
-    range: 0.75,
-  },
-  {
-    name: 'error',
-    range: 1,
-  },
-];
-
-export const spaceRange = [
-  {
-    name: 'forest',
-    range: 0.33,
-  },
-  {
-    name: 'plain',
-    range: 0.66,
-  },
-  {
-    name: 'cave',
-    range: 1,
-  },
-];
-
-export const resourceRange = [
-  {
-    name: 'wood',
-    range: 0.7,
-  },
-  {
-    name: 'iron',
-    range: 0.8,
-  },
-  {
-    name: 'ironDeposit',
-    range: 1,
-  },
-];
+export const createExplorationEvent = createEvent(explorationEventGenerators);
+export const createVillagerEvent = createEvent(randomEventGenerators);

@@ -42,7 +42,7 @@ export const selectCurrentIncomes = createSelector(
             incomes: map(resDesc.income, (value, resName) => ({
               type: resName,
               perUnit: value,
-              total: value * stateRes[resDesc.name].value,
+              total: Number((value * stateRes[resDesc.name].value).toFixed(1)),
             })),
           });
         }
