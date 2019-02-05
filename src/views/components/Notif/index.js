@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { map, tail, without } from 'lodash';
 import posed, { Transition } from 'react-native-pose';
@@ -62,25 +63,31 @@ const Notifs = ({ notifs, removeNotif }) => (
     </View>
   </View>
 );
+Notifs.propTypes = {
+  notifs: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+      message: PropTypes.string,
+      type: PropTypes.oneOf(['info', 'success', 'warning', 'error']),
+    })
+  ).isRequired,
+  removeNotif: PropTypes.func.isRequired,
+};
 
 export class NotifProvider extends React.Component {
+  static propTypes = {
+    maxNotif: PropTypes.number,
+    children: PropTypes.element.isRequired,
+  };
+
+  static defaultProps = {
+    maxNotif: 2,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      notifs: [
-        {
-          id: 123,
-          type: 'success',
-          title: 'aze',
-          message: 'azeazeaea',
-        },
-        {
-          id: 11213,
-          type: 'info',
-          title: 'QSDQDQ',
-          message: 'azeazeaea',
-        },
-      ],
+      notifs: [],
       addNotif: this.addNotif,
     };
   }
@@ -90,9 +97,8 @@ export class NotifProvider extends React.Component {
   }
 
   addNotif = (title, message, type = 'info') => {
-    this.setState(state => ({
-      ...state,
-      notifs: [
+    this.setState(state => {
+      const notifs = [
         ...state.notifs,
         {
           id: Math.random().toString(),
@@ -100,9 +106,17 @@ export class NotifProvider extends React.Component {
           message,
           type,
         },
-      ],
-    }));
+      ];
 
+      const { maxNotif } = this.props;
+      if (maxNotif && notifs.length > maxNotif) {
+        notifs.splice(notifs.maxNotif - 1, notifs.length - maxNotif);
+      }
+      return {
+        ...state,
+        notifs,
+      };
+    });
     this.startCleanNotif();
   };
 
@@ -136,10 +150,12 @@ export class NotifProvider extends React.Component {
   }
 
   render() {
+    const { children } = this.props;
+    const { notifs } = this.state;
     return (
       <Context.Provider value={this.state}>
-        {this.props.children}
-        <Notifs notifs={this.state.notifs} removeNotif={this.removeNotif} />
+        {children}
+        <Notifs notifs={notifs} removeNotif={this.removeNotif} />
       </Context.Provider>
     );
   }
