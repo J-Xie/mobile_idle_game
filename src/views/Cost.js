@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { View, ViewPropTypes } from 'react-native';
+import { map } from 'lodash';
+
 import { Text } from './components';
 
 const styles = EStyleSheet.create({
@@ -11,18 +13,15 @@ const styles = EStyleSheet.create({
   },
   cost: {
     textAlign: 'center',
-    marginTop: -4,
     fontSize: 12,
   },
 });
 
-const Costs = ({ costs, style }) => (
-  <View>
-    <View style={[styles.container, style]}>
-      {Object.keys(costs).map(key => (
-        <Text style={styles.cost} key={key}>{`${costs[key]} ${key}  `}</Text>
-      ))}
-    </View>
+const Costs = ({ costs, style, textStyle }) => (
+  <View style={[styles.container, style]}>
+    <Text style={[styles.cost, textStyle]}>
+      {map(costs, (value, resName) => `${value} ${resName}`).join('  ')}
+    </Text>
   </View>
 );
 Costs.propTypes = {

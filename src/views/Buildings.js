@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import EStyleSheet from 'react-native-extended-stylesheet';
-import { View } from 'react-native';
+import EStyleSheet, { build } from 'react-native-extended-stylesheet';
+import { View, Image } from 'react-native';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Button } from './components';
+import { Button, Text, Divider } from './components';
 import Cost from './Cost';
 import LogContainer from './Logs';
 
@@ -19,12 +19,12 @@ const styles = EStyleSheet.create({
     flex: 1,
   },
   actions: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    marginBottom: 10,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // flexDirection: 'row',
+    // flexWrap: 'wrap',
+    // marginTop: 10,
+    // marginBottom: 10,
   },
   button: {
     margin: 'auto',
@@ -47,23 +47,49 @@ const styles = EStyleSheet.create({
   },
 });
 
-const BuildingView = ({ building, buyResources }) => (
-  <View
-    key={building.name}
-    style={{
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
-  >
-    <Button
-      text={building.buttonText}
-      onPress={() => buyResources({ type: building.name, qty: 1 })}
-      style={styles.addMarge}
-    />
-    <Cost
-      style={{ flexDirection: 'row', marginLeft: 10 }}
-      costs={building.cost}
-    />
+// const ListItem = ({ header, content }) => {};
+const itemStyle = EStyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 5,
+    paddingHorizontal: 5,
+  },
+  header: {
+    flexDirection: 'row',
+    width: '33%',
+  },
+  actions: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  text: {
+    textAlign: 'center',
+  },
+  actionText: {
+    fontSize: 14,
+  },
+});
+const BuildingItem = ({ building, buyResources }) => (
+  <View>
+    <View key={building.name} style={itemStyle.container}>
+      <View style={itemStyle.header}>
+        {/* <Image width={32} height={32} source={building.icon || ''} /> */}
+        <Text>{building.name}</Text>
+      </View>
+
+      <View style={itemStyle.actions}>
+        <Button text="-" />
+        <View style={{ justifyContent: 'center' }}>
+          <Text style={[itemStyle.text, itemStyle.actionText]}>
+            Qty actuelle
+          </Text>
+          <Cost costs={building.cost} />
+        </View>
+        <Button text="+" />
+      </View>
+    </View>
   </View>
 );
 const Building = compose(
@@ -71,7 +97,7 @@ const Building = compose(
     null,
     { buyResources }
   )
-)(BuildingView);
+)(BuildingItem);
 
 const BuildingsView = ({ unlockedBuildings }) => (
   <View style={styles.container}>
@@ -80,7 +106,7 @@ const BuildingsView = ({ unlockedBuildings }) => (
         <Building key={building.name} building={building} />
       ))}
     </View>
-    <LogContainer />
+    {/* <LogContainer /> */}
   </View>
 );
 
