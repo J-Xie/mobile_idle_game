@@ -71,6 +71,7 @@ export const {
   buildings,
   picks,
   incomes,
+  jobs,
   allResources,
   unlockDependency,
 } = createResources(

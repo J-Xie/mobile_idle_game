@@ -1,9 +1,10 @@
-import { get, map, reduce } from 'lodash';
+import { get, map, reduce, some } from 'lodash';
 import { createSelector } from 'reselect';
 import {
   buildings,
   picks,
   incomes,
+  jobs,
   allResources,
 } from '../../config/resources';
 import { selectUnlockedResourceNames } from '../unlockedResources/selector';
@@ -13,6 +14,10 @@ export const selectLogs = state => get(state, 'resource.logs');
 export const selectMaxLogs = state => get(state, 'resource.maxLogs');
 
 export const selectResource = (state, name) => get(state, `resource.${name}`);
+export const selectIsResUnlocked = (state, name) =>
+  get(state, `resource.${name}.isUnlocked`);
+export const selectIsAnyJobUnlocked = state =>
+  some(jobs, job => selectIsResUnlocked(state, job.name));
 export const selectResources = state => state.resource;
 export const selectMap = state => get(state.resource, 'map');
 export const selectForest = state => get(state.resource, 'forest');

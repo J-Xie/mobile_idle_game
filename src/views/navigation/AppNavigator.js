@@ -5,8 +5,9 @@ import { connect } from 'react-redux';
 
 import { compose, withProps, withHandlers } from 'recompose';
 import ResourceList from '../ResourceListView';
-import Buildings from '../Buildings';
+// import Buildings from '../Buildings';
 // import Exploration from '../Exploration';
+import Management from '../Management';
 import Discovery from '../Discovery';
 import Income from '../Income';
 import Settings from '../Settings';
@@ -54,20 +55,21 @@ const tabBarComponent = compose(
         addResources(event.resFound);
       }
     },
-  })
-  // withInterval(props => props.addIncomes(), 1000),
-  // withInterval(props => props.createRandomEvent(), 10000)
+  }),
+  withInterval(props => props.addIncomes(), 1000),
+  withInterval(props => props.createRandomEvent(), 10000)
 )(BottomTabBar);
 
 export default createBottomTabNavigator(
   {
     Resources: { screen: ResourceList },
-    Buildings: { screen: Buildings },
+    Buildings: { screen: Management },
     Exploration: { screen: Discovery },
     Income: { screen: Income },
     Settings: { screen: Settings },
   },
   {
+    // initialRouteName: 'Buildings',
     tabBarComponent,
   }
 );
