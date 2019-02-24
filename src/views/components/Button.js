@@ -1,4 +1,5 @@
 import React from 'react';
+import { ViewPropTypes } from 'react-native';
 import { compose, withProps } from 'recompose';
 import { Button } from 'native-base';
 import PropTypes from 'prop-types';
@@ -29,10 +30,12 @@ const ThemedButton = ({ text, style, ...props }) => (
 ThemedButton.propTypes = {
   text: PropTypes.string.isRequired,
   selected: PropTypes.bool,
+  style: ViewPropTypes.style,
 };
 
 ThemedButton.defaultProps = {
   selected: false,
+  style: null,
 };
 
 export default compose(

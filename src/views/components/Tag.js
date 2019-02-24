@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { View } from 'react-native';
+import { View, ViewPropTypes } from 'react-native';
 
 const itemStyle = EStyleSheet.create({
   container: {
@@ -17,5 +18,14 @@ const itemStyle = EStyleSheet.create({
 const Tag = ({ style, children }) => (
   <View style={[itemStyle.container, style]}>{children}</View>
 );
+
+Tag.propTypes = {
+  style: ViewPropTypes.style,
+  // children: PropTypes.arrayOf(PropTypes.element.isRequired).isRequired,
+};
+
+Tag.defaultProps = {
+  style: null,
+};
 
 export default Tag;

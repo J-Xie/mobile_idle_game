@@ -11,12 +11,17 @@ const styles = EStyleSheet.create({
   tabView: {
     backgroundColor: 'transparent',
   },
+  text: {
+    color: '$textColor',
+    fontSize: 12,
+  },
 });
 
 const Tabs = props => (
   <TabBar
     {...props}
-    style={styles.tabView}
+    style={[styles.tabView, styles.text]}
+    labelStyle={styles.text}
     indicatorStyle={styles.indicatorStyle}
   />
 );
@@ -44,3 +49,12 @@ TabNav.propTypes = {
 };
 
 export default TabNav;
+// export default compose(
+//   connect(state => ({
+//     theme: selectTheme(state),
+//   })),
+//   withProps(props => ({
+//     activeTintColor: activeTint[props.theme],
+//     style: styles.content,
+//   }))
+// )(TabNav);
