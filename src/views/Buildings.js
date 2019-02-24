@@ -1,30 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EStyleSheet, { build } from 'react-native-extended-stylesheet';
-import { View, Image } from 'react-native';
+import { View, ScrollView, Image } from 'react-native';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Button, Text, Divider } from './components';
 import Cost from './Cost';
-import LogContainer from './Logs';
 
 import { buyResources } from '../redux/resource/action';
 import {
   selectUnlockedBuildings,
   selectResources,
 } from '../redux/resource/selector';
+import { selectTheme } from '../redux/settings/selector';
 
 const styles = EStyleSheet.create({
   container: {
     flex: 1,
-  },
-  actions: {
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // flexDirection: 'row',
-    // flexWrap: 'wrap',
-    // marginTop: 10,
-    // marginBottom: 10,
   },
   button: {
     margin: 'auto',
@@ -47,7 +39,6 @@ const styles = EStyleSheet.create({
   },
 });
 
-// const ListItem = ({ header, content }) => {};
 const itemStyle = EStyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -64,6 +55,11 @@ const itemStyle = EStyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  infos: {
+    justifyContent: 'center',
+    maxWidth: 150,
+    flexWrap: 'wrap',
+  },
   text: {
     textAlign: 'center',
   },
@@ -71,7 +67,7 @@ const itemStyle = EStyleSheet.create({
     fontSize: 14,
   },
 });
-const BuildingItem = ({ building, buyResources }) => (
+const BuildingItem = ({ building, resources, buyResources }) => (
   <View>
     <View key={building.name} style={itemStyle.container}>
       <View style={itemStyle.header}>
@@ -80,43 +76,58 @@ const BuildingItem = ({ building, buyResources }) => (
       </View>
 
       <View style={itemStyle.actions}>
-        <Button text="-" />
-        <View style={{ justifyContent: 'center' }}>
+        <Button
+          text="-"
+          onPress={() => buyResources({ type: building.name, qty: -1 })}
+        />
+        <View style={itemStyle.infos}>
           <Text style={[itemStyle.text, itemStyle.actionText]}>
-            Qty actuelle
+            {resources[building.name].value}
           </Text>
           <Cost costs={building.cost} />
         </View>
-        <Button text="+" />
+        {(building.name === 'frigate' ||
+          building.name === 'caravel' ||
+          building.name === 'bark') &&
+        (resources.frigate.value ||
+          resources.bark.value ||
+          resources.caravel.value) ? (
+          <Button text="+" disabled />
+        ) : (
+          <Button
+            text="+"
+            onPress={() => buyResources({ type: building.name, qty: 1 })}
+          />
+        )}
       </View>
     </View>
   </View>
 );
 const Building = compose(
   connect(
-    null,
+    state => ({ resources: selectResources(state) }),
     { buyResources }
   )
 )(BuildingItem);
 
-const BuildingsView = ({ unlockedBuildings }) => (
+const BuildingsView = ({ unlockedBuildings, theme }) => (
   <View style={styles.container}>
-    <View style={styles.actions}>
+    <ScrollView style={styles.actions}>
       {unlockedBuildings.map(building => (
         <Building key={building.name} building={building} />
       ))}
-    </View>
+    </ScrollView>
     {/* <LogContainer /> */}
   </View>
 );
 
 BuildingsView.propTypes = {
-  resources: PropTypes.object.isRequired,
+  // resources: PropTypes.object.isRequired,
 };
 
 export default compose(
   connect(state => ({
-    resources: selectResources(state),
+    theme: selectTheme(state),
     unlockedBuildings: selectUnlockedBuildings(state),
   }))
 )(BuildingsView);

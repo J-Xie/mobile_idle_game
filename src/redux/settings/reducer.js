@@ -1,4 +1,5 @@
 import { CHANGE_THEME, RESET } from './action';
+import { FINISH_GAME } from '../resource/action';
 
 const initialState = {
   theme: 'dark',
@@ -12,6 +13,8 @@ export default (state = initialState, action) => {
         ...state,
         theme: action.payload.theme,
       };
+    case FINISH_GAME:
+      return initialState;
     case RESET:
       return initialState;
     default:

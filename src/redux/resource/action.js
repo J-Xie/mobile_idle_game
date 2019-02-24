@@ -6,6 +6,7 @@ import { selectResources } from './selector';
 
 export const ADD_RESOURCES = 'ADD_RESOURCES';
 export const BUY_RESOURCES = 'BUY_RESOURCES';
+export const CONVERT_RESOURCES = 'CONVERT_RESOURCES';
 export const ADD_MULT_RESOURCES = 'ADD_MULT_RESOURCES';
 export const ADD_INCOMES = 'ADD_INCOMES';
 
@@ -13,6 +14,8 @@ export const LOAD_MAP = 'LOAD_MAP';
 
 export const CHANGE_MAX_LOGS = 'CHANGE_MAX_LOGS';
 export const UNLOCK_RESOURCES = 'UNLOCK_RESOURCES';
+
+export const FINISH_GAME = 'FINISH_GAME';
 
 export const unlockResources = resourceNames => ({
   type: UNLOCK_RESOURCES,
@@ -85,6 +88,22 @@ export const buyResources = ({ type, qty }) => (dispatch, getState) => {
   checkUnlock(type, getState, dispatch);
 };
 
+export const convertResources = ({ products, results }) => (
+  dispatch,
+  getState
+) => {
+  dispatch({
+    type: CONVERT_RESOURCES,
+    payload: {
+      products,
+      results,
+    },
+  });
+  forEach(results, (value, resName) =>
+    checkUnlock(resName, getState, dispatch)
+  );
+};
+
 export const addIncomes = () => (dispatch, getState) => {
   dispatch({
     type: ADD_INCOMES,
@@ -106,5 +125,12 @@ export const changeMaxLogs = maxLogs => ({
   type: CHANGE_MAX_LOGS,
   payload: {
     maxLogs,
+  },
+});
+
+export const finishGame = capacity => ({
+  type: FINISH_GAME,
+  payload: {
+    capacity,
   },
 });

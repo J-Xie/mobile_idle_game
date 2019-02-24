@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator, BottomTabBar } from 'react-navigation';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import { connect } from 'react-redux';
+import { random } from 'lodash';
 
 import { compose, withProps, withHandlers } from 'recompose';
 import ResourceList from '../ResourceListView';
@@ -47,7 +48,6 @@ const tabBarComponent = compose(
       addMultResources: addResources,
     }) => () => {
       const event = createVillagerEvent(map, resources);
-      console.log(event);
       if (event && event.notif) {
         addNotif(event.notif.title, event.notif.message, event.notif.type);
       }
@@ -57,7 +57,7 @@ const tabBarComponent = compose(
     },
   }),
   withInterval(props => props.addIncomes(), 1000),
-  withInterval(props => props.createRandomEvent(), 10000)
+  withInterval(props => props.createRandomEvent(), random(20000, 40000))
 )(BottomTabBar);
 
 export default createBottomTabNavigator(
@@ -69,7 +69,7 @@ export default createBottomTabNavigator(
     Settings: { screen: Settings },
   },
   {
-    // initialRouteName: 'Buildings',
+    initialRouteName: 'Buildings',
     tabBarComponent,
   }
 );

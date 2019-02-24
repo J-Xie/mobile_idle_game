@@ -1,19 +1,19 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { map, tail, first } from 'lodash';
 import PropTypes from 'prop-types';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { compose } from 'recompose';
+import { compose, withState, withHandlers } from 'recompose';
 import { connect } from 'react-redux';
 
 import { Text } from './components';
-import { selectCurrentIncomes } from '../redux/resource/selector';
-
-// const roles = {
-//   lumberjack: {},
-//   soldier: {},
-//   scout: {},
-// };
+import TabNav from './navigation/TopTab';
+// import Artifact from './Artifacts';
+import {
+  selectResources,
+  selectCurrentIncomes,
+  selectUnlockedArtifacts,
+} from '../redux/resource/selector';
 
 // const boats = {
 //   bark: {},
@@ -112,7 +112,7 @@ IncomeRow.propTypes = {
   }).isRequired,
 };
 
-const Income = ({ incomes }) => (
+const IncomeComponent = ({ incomes }) => (
   <View>
     <Row style={styles.incomeRow}>
       <Col size={33.3}>
@@ -134,12 +134,105 @@ const Income = ({ incomes }) => (
     ))}
   </View>
 );
-Income.propTypes = {
+IncomeComponent.propTypes = {
   incomes: PropTypes.array.isRequired,
 };
 
-export default compose(
+const Income = compose(
   connect(state => ({
     incomes: selectCurrentIncomes(state),
   }))
-)(Income);
+)(IncomeComponent);
+
+const artifactStyle = EStyleSheet.create({
+  card: {
+    borderColor: '$borderColor',
+    borderWidth: 1,
+    margin: 15,
+    borderRadius: 5,
+  },
+  container: {
+    // flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+  },
+  bottomBorder: {
+    borderBottomColor: '$borderColor',
+    borderBottomWidth: 1,
+  },
+  infos: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 5,
+  },
+  title: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  desc: {},
+  actions: {},
+});
+const ArtifactComponent = ({ resources, unlockedArtifacts }) => (
+  <ScrollView>
+    {unlockedArtifacts.map(artifact => {
+      if (resources[artifact.name].value) {
+        return (
+          <View key={artifact.name} style={artifactStyle.card}>
+            <View style={[artifactStyle.container, artifactStyle.bottomBorder]}>
+              <Text style={artifactStyle.title}>{artifact.name}</Text>
+              <Text>{artifact.desc}</Text>
+            </View>
+          </View>
+        );
+      }
+      return null;
+    })}
+  </ScrollView>
+);
+ArtifactComponent.propTypes = {
+  resources: PropTypes.object.isRequired,
+  unlockedArtifacts: PropTypes.array.isRequired,
+};
+
+const Artifact = compose(
+  connect(state => ({
+    resources: selectResources(state),
+    unlockedArtifacts: selectUnlockedArtifacts(state),
+  }))
+)(ArtifactComponent);
+
+const Incomes = ({ onIndexChange, navState }) => (
+  <TabNav
+    navState={navState}
+    scenes={{ income: Income, artifact: Artifact }}
+    onTabChange={onIndexChange}
+  />
+);
+Incomes.propTypes = {
+  onIndexChange: PropTypes.func.isRequired,
+  navState: PropTypes.shape({
+    index: PropTypes.number.isRequired,
+    routes: PropTypes.arrayOf(
+      PropTypes.shape({
+        key: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+      }).isRequired
+    ).isRequired,
+  }).isRequired,
+};
+
+export default compose(
+  withState('navState', 'setNavState', {
+    index: 0,
+    routes: [
+      { key: 'income', title: 'Income' },
+      { key: 'artifact', title: 'Artifact' },
+    ],
+  }),
+  withHandlers({
+    onIndexChange: ({ navState, setNavState }) => index =>
+      setNavState({ ...navState, index }),
+  })
+)(Incomes);

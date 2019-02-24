@@ -11,11 +11,67 @@ import forgeIcon from '../assets/blacksmith.png';
 import harbourIcon from '../assets/lighthouse.png';
 import sawmillIcon from '../assets/saw.png';
 import villagerIcon from '../assets/farmer.png';
+import pearlIcon from '../assets/pearl.png';
 
 const BUILDING = 'BUILDING';
 const PICK = 'PICK';
 const RAW = 'RAW';
 const JOB = 'JOB';
+const RESEARCH = 'RESEARCH';
+const CONVERSION = 'CONVERSION';
+const SHIP = 'SHIP';
+const ARTIFACT = 'ARTIFACT';
+
+const a = [
+  {
+    name: '1',
+    product: {
+      a: 1,
+      b: 2,
+    },
+    result: {
+      ironDeposit: 1,
+    },
+  },
+  {
+    name: '2',
+    product: {
+      a: 1,
+    },
+    result: {
+      goldDeposit: 1,
+    },
+  },
+  {
+    name: '3',
+    product: {},
+    result: {
+      ironDeposit: 2,
+    },
+  },
+  {
+    name: '4',
+    result: {
+      ironDeposit: 4,
+      goldDeposit: 2,
+    },
+  },
+];
+
+const results = [
+  {
+    title: 'ironDeposit',
+    converters: [{ name: '1' }, { name: '3' }],
+  },
+  {
+    title: 'goldDeposit',
+    converters: [{ name: '2' }],
+  },
+  {
+    title: 'ironDeposit + goldDeposit',
+    converters: [{ name: '4' }],
+  },
+];
 
 const createResources = (...resources) =>
   resources.reduce(
@@ -50,6 +106,29 @@ const createResources = (...resources) =>
         case JOB:
           acc.jobs[elem.name] = elem;
           break;
+        case RESEARCH:
+          acc.researchs[elem.name] = elem;
+          break;
+        case CONVERSION:
+          {
+            const key = Object.keys(elem.result)
+              .sort()
+              .join(' + ');
+            if (!acc.conversions[key]) {
+              acc.conversions[key] = {
+                title: key,
+                converters: [],
+              };
+            }
+            acc.conversions[key].converters.push(elem);
+          }
+          break;
+        case SHIP:
+          acc.ships[elem.name] = elem;
+          break;
+        case ARTIFACT:
+          acc.artifacts[elem.name] = elem;
+          break;
         default:
           throw new Error(`Undefined resource type :: ${JSON.stringify(elem)}`);
       }
@@ -61,6 +140,10 @@ const createResources = (...resources) =>
       picks: {},
       incomes: {},
       jobs: {},
+      researchs: {},
+      conversions: {},
+      artifacts: {},
+      ships: {},
       unlockDependency: {},
       allResources: {},
     }
@@ -72,6 +155,10 @@ export const {
   picks,
   incomes,
   jobs,
+  researchs,
+  conversions,
+  artifacts,
+  ships,
   allResources,
   unlockDependency,
 } = createResources(
@@ -80,6 +167,7 @@ export const {
     buttonText: 'Pick up wood',
     type: PICK,
     icon: woodIcon,
+    initialValue: 20000,
     cost: {},
     req: {},
     income: {},
@@ -178,6 +266,7 @@ export const {
     buttonText: 'Study',
     type: PICK,
     icon: scienceIcon,
+    initialValue: 2000,
     req: {
       hut: 1,
     },
@@ -234,10 +323,14 @@ export const {
   {
     name: 'recycler',
     buttonText: 'Build recycler',
-    type: BUILDING,
+    desc: 'Build a recycler to convert any given resource into another one.',
+    type: RESEARCH,
     icon: '',
+    isUnlocked: true,
+    initialValue: 1,
     req: {
-      science: 150,
+      laboratory: 1,
+      science: 100,
     },
     cost: {
       science: 200,
@@ -246,10 +339,196 @@ export const {
     income: {},
   },
   {
+    name: 'recyclerUpgrade',
+    buttonText: 'Upgrade recycler',
+    desc: 'Upgrade recycler to discover more conversions.',
+    type: RESEARCH,
+    icon: '',
+    req: {
+      recycler: 1,
+    },
+    cost: {
+      science: 250,
+      equipment: 20,
+    },
+  },
+  {
+    name: 'upgradeLumberjackEfficiency',
+    buttonText: 'Upgrade sawmill',
+    desc: "Improve lumberjack's efficiency in sawmill.",
+    type: RESEARCH,
+    icon: '',
+    req: {
+      laboratory: 1,
+      science: 200,
+    },
+    cost: {
+      science: 200,
+      equipment: 15,
+    },
+    bonus: {},
+    income: {},
+  },
+
+  {
+    name: 'caveToIronDeposit',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recycler: 1,
+    },
+    product: {
+      cave: 8,
+    },
+    result: {
+      ironDeposit: 1,
+    },
+  },
+  {
+    name: 'caveTo2IronDeposits',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recycler: 1,
+    },
+    product: {
+      cave: 15,
+    },
+    result: {
+      ironDeposit: 2,
+    },
+  },
+  {
+    name: 'caveToIronDepositPlain',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recycler: 1,
+    },
+    product: {
+      cave: 9,
+    },
+    result: {
+      ironDeposit: 1,
+      plain: 1,
+    },
+  },
+  {
+    name: 'caveToGoldDeposit',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recycler: 1,
+    },
+    product: {
+      cave: 15,
+    },
+    result: {
+      goldDeposit: 1,
+    },
+  },
+  {
+    name: 'caveToForest',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recyclerUpgrade: 1,
+    },
+    product: {
+      cave: 10,
+    },
+    result: {
+      forest: 10,
+    },
+  },
+  {
+    name: 'caveToPlain',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recyclerUpgrade: 1,
+    },
+    product: {
+      cave: 10,
+    },
+    result: {
+      plain: 10,
+    },
+  },
+  {
+    name: 'plainToForest',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recyclerUpgrade: 1,
+    },
+    product: {
+      plain: 10,
+    },
+    result: {
+      forest: 10,
+    },
+  },
+  {
+    name: 'plainToCave',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recyclerUpgrade: 1,
+    },
+    product: {
+      plain: 10,
+    },
+    result: {
+      cave: 10,
+    },
+  },
+  {
+    name: 'foresToPlain',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recyclerUpgrade: 1,
+    },
+    product: {
+      forest: 10,
+    },
+    result: {
+      plain: 10,
+    },
+  },
+  {
+    name: 'forestToCave',
+    type: CONVERSION,
+    icon: '',
+    req: {
+      recyclerUpgrade: 1,
+    },
+    product: {
+      forest: 10,
+    },
+    result: {
+      cave: 10,
+    },
+  },
+  // ...createAllPossibilities({
+  //   nameSuffix: 'toIronDeposit',
+  //   plain
+  // }),
+  // {
+  //   name: 'toIronDeposit',
+  //   type: CONVERSION,
+  //   req: {},
+  //   product: [{}],
+  //   // result:
+  // },
+  {
     name: 'ironDeposit',
     type: RAW,
     icon: '',
-    req: {},
+    req: {
+      ironDeposit: 1,
+    },
     cost: {},
     income: {},
   },
@@ -274,11 +553,11 @@ export const {
     name: 'iron',
     type: RAW,
     icon: '',
-    req: {},
+    req: {
+      iron: 1,
+    },
     cost: {},
     income: {},
-    isUnlocked: true,
-    initialValue: 50,
   },
   {
     name: 'ironMinerJob',
@@ -311,7 +590,9 @@ export const {
     name: 'goldDeposit',
     type: RAW,
     icon: '',
-    req: {},
+    req: {
+      goldDeposit: 1,
+    },
     cost: {},
     income: {},
   },
@@ -335,10 +616,11 @@ export const {
     name: 'gold',
     type: RAW,
     icon: '',
-    req: {},
+    req: {
+      gold: 1,
+    },
     cost: {},
     income: {},
-    isUnlocked: true,
   },
   {
     name: 'goldMinerJob',
@@ -364,7 +646,7 @@ export const {
       science: 50,
     },
     income: {
-      iron: 0.1,
+      gold: 0.1,
     },
   },
   {
@@ -374,12 +656,12 @@ export const {
     icon: forgeIcon,
     req: {
       wood: 10,
-      //iron: 15,
+      // iron: 15,
       plain: 5,
     },
     cost: {
       wood: 10,
-      //iron: 15,
+      // iron: 15,
       plain: 5,
     },
     income: {},
@@ -441,25 +723,163 @@ export const {
     isUnlocked: false,
   },
   {
-    name: 'ship',
-    type: BUILDING,
+    name: 'bark',
+    type: SHIP,
     icon: '',
     req: {
       harbour: 1,
     },
     cost: {
-      wood: 100,
-      plain: 5,
+      wood: 300,
+    },
+    capacity: {
+      villager: 2,
+      wood: 10,
+      iron: 5,
     },
     income: {},
   },
   {
-    name: 'coin',
-    type: RAW,
+    name: 'frigate',
+    type: SHIP,
     icon: '',
-    req: {},
+    req: {
+      harbour: 1,
+    },
+    cost: {
+      wood: 400,
+    },
+    capacity: {
+      villager: 5,
+      wood: 20,
+      iron: 10,
+      equipment: 2,
+    },
+    income: {},
+  },
+  {
+    name: 'caravel',
+    type: SHIP,
+    icon: '',
+    req: {
+      harbour: 1,
+    },
+    cost: {
+      wood: 500,
+    },
+    capacity: {
+      villager: 10,
+      wood: 20,
+      iron: 10,
+      gold: 2,
+      equipment: 2,
+    },
+    income: {},
+    initialValue: 1,
+  },
+  {
+    name: 'pearl',
+    type: RAW,
+    icon: pearlIcon,
+    req: {
+      pearl: 1,
+    },
     cost: {},
     income: {},
+  },
+  {
+    name: 'mapDiscovered',
+    type: ARTIFACT,
+    desc: 'Allow viewing available space on the current island.',
+    icon: '',
+    req: {
+      mapDiscovered: 1,
+    },
+    cost: {
+      pearl: 3,
+    },
+    income: {},
+    isUnlocked: true,
+  },
+  {
+    name: 'buildingDiscovered',
+    type: ARTIFACT,
+    desc: 'Allow viewing what buildings acquisition unlocks.',
+    icon: '',
+    req: {
+      buildingDiscovered: 1,
+    },
+    cost: {
+      pearl: 3,
+    },
+    income: {},
+    isUnlocked: true,
+  },
+  {
+    name: 'woodStartingPack1',
+    type: ARTIFACT,
+    desc: 'Start your new journey with some wood.',
+    icon: '',
+    req: {
+      woodStartingPack1: 1,
+    },
+    cost: {
+      pearl: 2,
+    },
+    income: {},
+    bonus: {
+      wood: 20,
+    },
+    isUnlocked: true,
+  },
+  {
+    name: 'woodStartingPack2',
+    type: ARTIFACT,
+    desc: 'More wood for more effectiveness.',
+    icon: '',
+    req: {
+      woodStartingPack1: 1,
+    },
+    cost: {
+      pearl: 4,
+    },
+    income: {},
+    bonus: {
+      wood: 50,
+    },
+  },
+  {
+    name: 'villagerStartingPack1',
+    type: ARTIFACT,
+    desc: 'Bring some villagers along with you.',
+    icon: '',
+    req: {
+      villagerStartingPack1: 1,
+    },
+    cost: {
+      pearl: 2,
+    },
+    income: {},
+    bonus: {
+      villager: 2,
+    },
+    isUnlocked: true,
+  },
+  {
+    name: 'villagerStartingPack2',
+    type: ARTIFACT,
+    desc: 'We are legion.',
+    icon: '',
+    req: {
+      villagerStartingPack1: 1,
+    },
+    cost: {
+      pearl: 5,
+    },
+    income: {},
+    bonus: {
+      villager: 5,
+    },
   },
   {
     name: 'forest',
