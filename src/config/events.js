@@ -64,7 +64,7 @@ const randomEvents = [
       title: 'Beasts attack.',
       message: "Some of your huts and villagers didn't survive the attack.",
     }),
-    range: () => 0.05,
+    range: () => 0.03,
   },
   {
     conditions: (stateMap, stateRes) =>
@@ -80,7 +80,7 @@ const randomEvents = [
         incomes
       )}`,
     }),
-    range: () => 0.05,
+    range: () => 0.03,
   },
   {
     conditions: () => true,
@@ -93,16 +93,16 @@ const randomEvents = [
     }),
     range: () => 0.02,
   },
-  {
-    conditions: () => true,
-    incomes: () => {},
-    notif: () => ({
-      type: 'info',
-      title: 'Itinerant merchant',
-      message: '',
-    }),
-    range: () => 0.02,
-  },
+  // {
+  //   conditions: () => true,
+  //   incomes: () => {},
+  //   notif: () => ({
+  //     type: 'info',
+  //     title: 'Itinerant merchant',
+  //     message: '',
+  //   }),
+  //   range: () => 0.02,
+  // },
 ];
 
 // EXPLORATION PART
@@ -197,6 +197,53 @@ const explorationEvents = [
       )}`,
     }),
     range: () => 0.05,
+  },
+];
+
+// EMBARCATION PART
+const embarcationEvents = [
+  {
+    conditions: (stateMap, stateRes) =>
+      !stateRes.mapDiscovered.value &&
+      stateRes.forest.value === stateMap.forest &&
+      stateRes.plain.value === stateMap.plain &&
+      stateRes.cave === stateMap.cave,
+    incomes: () => ({
+      mapDiscovered: createRes(1),
+    }),
+    notif: () => ({
+      type: 'success',
+      title: 'New artifact found!',
+      message: 'You found an artifact revealing the total map space available!',
+    }),
+    range: () => 0.5,
+  },
+  {
+    conditions: (stateMap, stateRes) =>
+      !stateRes.buildingDiscovered.value &&
+      stateRes.forest.value === stateMap.forest &&
+      stateRes.plain.value === stateMap.plain &&
+      stateRes.cave === stateMap.cave,
+    incomes: () => ({
+      buildingDiscovered: createRes(1),
+    }),
+    notif: () => ({
+      type: 'success',
+      title: 'New artifact found!',
+      message:
+        'You found an artifact revealing what building acquisition unlocks!',
+    }),
+    range: () => 0.5,
+  },
+  {
+    conditions: () => true,
+    incomes: () => {},
+    notif: () => ({
+      type: 'info',
+      title: 'Just a wild blue sea.',
+      message: 'Nothing was found on this side of the sea.',
+    }),
+    range: () => 0.1,
   },
 ];
 
@@ -308,6 +355,15 @@ const genMapEvents = terrains.map(terrain =>
   )
 );
 
+const genEmbarcationEvents = embarcationEvents.map(event =>
+  makeResEventGenerator(
+    event.conditions,
+    event.incomes,
+    event.notif,
+    event.range
+  )
+);
+
 const genResEvents = explorationEvents.map(event =>
   makeResEventGenerator(
     event.conditions,
@@ -376,4 +432,5 @@ export const createEvent = eventGenerators => (stateMap, stateRes) => {
 };
 
 export const createExplorationEvent = createEvent(explorationEventGenerators);
+export const createEmbarcationEvent = createEvent(genEmbarcationEvents);
 export const createVillagerEvent = createEvent(randomEventGenerators);
