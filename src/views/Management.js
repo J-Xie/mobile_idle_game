@@ -2,14 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose, withState, withHandlers, withPropsOnChange } from 'recompose';
 import { connect } from 'react-redux';
-import { without, omit } from 'lodash';
+import { without, omit, filter } from 'lodash';
 
 import TabNav from './navigation/TopTab';
 import Buildings from './Buildings';
 import Jobs from './Jobs';
+import Research from './Research';
 import Recycler from './Recycler';
 import {
   selectResource,
+  selectIsResearchUnlocked,
   selectIsAnyJobUnlocked,
 } from '../redux/resource/selector';
 
@@ -39,7 +41,8 @@ Management.propTypes = {
 export default compose(
   connect(state => ({
     jobUnlocked: selectIsAnyJobUnlocked(state),
-    recyclerUnlocked: selectResource(state, 'recycler.isUnlocked'),
+    researchUnlocked: selectIsResearchUnlocked(state),
+    recyclerUnlocked: selectResource(state, 'recycler.value'),
   })),
   withState('tabs', 'setTabs', {
     nav: {
@@ -86,12 +89,56 @@ export default compose(
       setTabs(tabs => ({
         nav: {
           index: idx,
-          routes: without(tabs.nav.routes, { key: 'job', title: 'Jobs' }),
+          // routes: without(tabs.nav.routes, { key: 'job', title: 'Jobs' }),
+          routes: filter(tabs.nav.routes, route => route.key !== 'job'),
         },
         scenes: omit(tabs.scenes, ['job']),
       }));
     }
   }),
+  withPropsOnChange(
+    ['researchUnlocked'],
+    ({ researchUnlocked, tabs, setTabs }) => {
+      if (researchUnlocked) {
+        setTabs(tabs => ({
+          nav: {
+            ...tabs.nav,
+            routes: [
+              ...tabs.nav.routes,
+              {
+                key: 'research',
+                title: 'Research',
+              },
+            ],
+          },
+          scenes: {
+            ...tabs.scenes,
+            research: Research,
+          },
+        }));
+      } else {
+        const { index } = tabs.nav;
+        let idx = index;
+        if (
+          tabs.nav.routes[tabs.nav.index] ===
+          { key: 'research', title: 'Research' }
+        ) {
+          idx = 0;
+        }
+        setTabs(tabs => ({
+          nav: {
+            index: idx,
+            routes: filter(tabs.nav.routes, route => route.key !== 'research'),
+            // routes: without(tabs.nav.routes, {
+            //   key: 'recycle',
+            //   title: 'Recycler',
+            // }),
+          },
+          scenes: omit(tabs.scenes, ['research']),
+        }));
+      }
+    }
+  ),
   withPropsOnChange(
     ['recyclerUnlocked'],
     ({ recyclerUnlocked, tabs, setTabs }) => {
@@ -124,12 +171,13 @@ export default compose(
         setTabs(tabs => ({
           nav: {
             index: idx,
-            routes: without(tabs.nav.routes, {
-              key: 'recycle',
-              title: 'Recycler',
-            }),
+            routes: filter(tabs.nav.routes, route => route.key !== 'recycle'),
+            // routes: without(tabs.nav.routes, {
+            //   key: 'recycle',
+            //   title: 'Recycler',
+            // }),
           },
-          scenes: omit(tabs.scenes, ['recycler']),
+          scenes: omit(tabs.scenes, ['recycle']),
         }));
       }
     }
