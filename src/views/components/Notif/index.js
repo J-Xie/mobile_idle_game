@@ -25,7 +25,7 @@ const styles = EStyleSheet.create({
     padding: 4,
     // maxWidth: 200,
     borderRadius: '$borderRadius',
-    opacity: 0.6,
+    opacity: 0.9,
   },
   title: {
     fontSize: 14,
@@ -37,13 +37,13 @@ const styles = EStyleSheet.create({
 
 const Box = posed.View({
   enter: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: 50 },
+  exit: { opacity: 0, x: 150 },
 });
 
 const Notifs = ({ notifs, removeNotif }) => (
   <View style={styles.container}>
-    <View style={styles.inner} collapsable={false}>
-      <Transition enterAfterExit>
+    <View style={styles.inner}>
+      <Transition>
         {map(notifs, notif => (
           <Box key={notif.id}>
             <TouchableOpacity onPress={() => removeNotif(notif)}>
@@ -160,6 +160,12 @@ export class NotifProvider extends React.Component {
     );
   }
 }
+
+
+() => {
+  const memoizedFunc = _.memoize(ft);
+
+};
 
 export const withAddNotif = (
   propName = 'addNotif'
